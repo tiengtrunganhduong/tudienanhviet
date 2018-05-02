@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#18d</color>
+    <color name="colorPrimaryDark">#18d</color>
+    <!--<color name="colorAccent">#58ACE7</color>
+    <color name="colorEnglish">#58ACE7</color>
+    <color name="colorVietnamese">#E79358</color>-->
+    <color name="colorAccent">#70B8EB</color>
+    <color name="colorEnglish">#70B8EB</color>
+    <color name="colorVietnamese">#EBA370</color>
+
+</resources>

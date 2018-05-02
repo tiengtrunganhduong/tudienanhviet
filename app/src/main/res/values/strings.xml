@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Từ Điển Anh Việt</string>
+    <string name="search_hint">Search English or Vietnamese</string>
+    <string name="pronunciation">Phát âm</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Không xóa</string>
+    <string name="delete">Xóa</string>
+    <string name="deleted_word">Đã xóa \"%s\"</string>
+    <string name="delete_confirm_title">Xóa \"%s\"?</string>
+    <string name="delete_confirm_message">Xóa \"%s\" khỏi danh sách MY WORDS?</string>
+    <string name="my_words_title">MY WORDS</string>
+    <string name="my_words_count" formatted="false">(%d)</string>
+    <string-array name="my_words_sort_orders">
+        <item>New</item>
+        <item>ABC</item>
+    </string-array>
+    <string name="an_error_occurred">Có một lỗi đã xảy ra!</string>
+    <string name="please_restart_app">
+        Rất xin lỗi bạn vì sự bất tiện này.
+        Hãy thử lại bằng cách khởi động lại ứng dụng.
+        Nếu lỗi vẫn tiếp diễn, vui lòng liên hệ trực tiếp với nhà phát triển qua email k43nqtn@gmail.com.
+        Chúng tôi sẽ cố gắng khắc phục trong thời gian sớm nhất.
+    </string>
+    <string name="restart_app">Khởi động lại</string>
+    <string name="lookup_count_message">Bạn đã tra từ này %d lần</string>
+    <string name="pronunciation_no_internet_connection_title">Không có kết nối Internet</string>
+    <string name="pronunciation_no_internet_connection_message">
+        Phần phát âm được thu lại từ giọng đọc thật của người bản xứ và lưu trữ trên máy chủ
+        (do dung lượng rất lớn nên không lưu offline được).
+        Bạn hãy bật kết nối Internet (WIFI, 3G hoặc 4G) để nghe được nhé!
+    </string>
+    <string name="pron_uk">UK</string>
+    <string name="pron_us">US</string>
+    <string name="pron_unknown">••</string>
+    <string name="no_tts_title">
+        Điện thoại của bạn không hỗ trợ phát âm tự động.
+    </string>
+    <string name="no_tts_message">
+        Vui lòng sử dụng phát âm được lưu sẵn trên máy chủ
+        bằng cách chạm vào nút bấm có biểu tượng Play (hình tam giác).
+    </string>
+    <string name="view_more">Xem thêm</string>
+    <string name="view_less">Thu gọn</string>
+    <string name="similar_title">Similar to:</string>
+</resources>

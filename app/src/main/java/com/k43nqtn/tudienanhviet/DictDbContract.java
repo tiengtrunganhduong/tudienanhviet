@@ -3,7 +3,7 @@ package com.k43nqtn.tudienanhviet;
 import android.provider.BaseColumns;
 
 final class DictDbContract {
-    static final String DATABASE_NAME = "dictionary.db";
+    static final String DATABASE_NAME = "dict.db";
     static final int DATABASE_VERSION = 1;
 
     static final String COLUMN_ID = BaseColumns._ID;

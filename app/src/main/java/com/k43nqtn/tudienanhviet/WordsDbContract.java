@@ -2,9 +2,6 @@ package com.k43nqtn.tudienanhviet;
 
 import android.provider.BaseColumns;
 
-/**
- * Created by User on 4/28/2018.
- */
 
 final class WordsDbContract {
     static final String DATABASE_NAME = "words.db";

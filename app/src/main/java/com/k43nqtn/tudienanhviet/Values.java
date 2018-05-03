@@ -4,10 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;
 
-/**
- * Created by User on 5/3/2018.
- */
-
 class Values {
     Context context;
     int COLOR_RED;

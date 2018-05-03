@@ -186,7 +186,9 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                                 if (synonyms.length() > 0) {
                                     ArrayList<String> synonymList = new ArrayList<>();
                                     for (int j = 1; j < synonyms.length(); j++) {
-                                        if (synonyms.getString(j).toLowerCase().compareTo(syn.toLowerCase()) != 0) {
+                                        if (synonyms.getString(j).toLowerCase().compareTo(syn.toLowerCase()) != 0
+                                            && synonyms.getString(j).toLowerCase().compareTo(word.toLowerCase()) != 0
+                                        ) {
                                             synonymList.add(synonyms.getString(j));
                                         }
                                     }

@@ -12,5 +12,6 @@ class DictDbHelper extends SQLiteAssetHelper {
 
     DictDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        setForcedUpgrade();
     }
 }

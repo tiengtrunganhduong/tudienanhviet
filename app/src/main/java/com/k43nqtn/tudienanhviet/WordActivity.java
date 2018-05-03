@@ -2,29 +2,28 @@ package com.k43nqtn.tudienanhviet;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 //import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.AdView;
 //import com.google.android.gms.ads.MobileAds;
+//import com.google.android.gms.ads.formats.NativeAdOptions;
+//import com.google.android.gms.ads.formats.NativeAppInstallAd;
+//import com.google.android.gms.ads.formats.NativeContentAd;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdChoicesView;
@@ -34,9 +33,6 @@ import com.facebook.ads.AdView;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
-import com.google.android.gms.ads.formats.NativeAdOptions;
-import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.google.android.gms.ads.formats.NativeContentAd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,16 +97,15 @@ public class WordActivity extends AppCompatActivity {
             }
         }
 
-//        initAds();
         initNativeAd();
 
-        deleteOldDatabasesAsync();
+//        deleteOldDatabasesAsync();
     }
 
-    private void deleteOldDatabasesAsync() {
-        OldDbDeleteTask oldDbDeleteTask = new OldDbDeleteTask(this, "dict.db");
-        oldDbDeleteTask.execute();
-    }
+//    private void deleteOldDatabasesAsync() {
+//        OldDbDeleteTask oldDbDeleteTask = new OldDbDeleteTask(this, "dict.db");
+//        oldDbDeleteTask.execute();
+//    }
 
     private void initNativeAd() {
         // Facebook audience network - native ads
@@ -247,47 +242,47 @@ public class WordActivity extends AppCompatActivity {
             @Override
             public void onError(Ad ad, AdError adError) {
                 // Replace with Admob
-                com.google.android.gms.ads.MobileAds.initialize(context, "ca-app-pub-3126660852581586~6866555592");
-                final com.google.android.gms.ads.AdView mAdView = new com.google.android.gms.ads.AdView(context);
-                mAdView.setAdSize(com.google.android.gms.ads.AdSize.MEDIUM_RECTANGLE);
-                mAdView.setAdUnitId("ca-app-pub-3126660852581586/7530283772");
-
-                mAdView.setAdListener(new com.google.android.gms.ads.AdListener() {
-                    @Override
-                    public void onAdLoaded() {
-                        // Code to be executed when an ad finishes loading.
-                        adContainer.removeAllViews();
-                        adContainer.addView(mAdView);
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(int errorCode) {
-                        // Code to be executed when an ad request fails.
-                        if (adContainer.getParent() != null) {
-                            ((LinearLayout) adContainer.getParent()).removeView(adContainer);
-                        }
-                    }
-
-                    @Override
-                    public void onAdOpened() {
-                        // Code to be executed when an ad opens an overlay that
-                        // covers the screen.
-                    }
-
-                    @Override
-                    public void onAdLeftApplication() {
-                        // Code to be executed when the user has left the app.
-                    }
-
-                    @Override
-                    public void onAdClosed() {
-                        // Code to be executed when when the user is about to return
-                        // to the app after tapping on an ad.
-                    }
-                });
-
-                com.google.android.gms.ads.AdRequest adRequest = new com.google.android.gms.ads.AdRequest.Builder().build();
-                mAdView.loadAd(adRequest);
+//                com.google.android.gms.ads.MobileAds.initialize(context, "ca-app-pub-3126660852581586~6866555592");
+//                final com.google.android.gms.ads.AdView mAdView = new com.google.android.gms.ads.AdView(context);
+//                mAdView.setAdSize(com.google.android.gms.ads.AdSize.MEDIUM_RECTANGLE);
+//                mAdView.setAdUnitId("ca-app-pub-3126660852581586/7530283772");
+//
+//                mAdView.setAdListener(new com.google.android.gms.ads.AdListener() {
+//                    @Override
+//                    public void onAdLoaded() {
+//                        // Code to be executed when an ad finishes loading.
+//                        adContainer.removeAllViews();
+//                        adContainer.addView(mAdView);
+//                    }
+//
+//                    @Override
+//                    public void onAdFailedToLoad(int errorCode) {
+//                        // Code to be executed when an ad request fails.
+//                        if (adContainer.getParent() != null) {
+//                            ((LinearLayout) adContainer.getParent()).removeView(adContainer);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onAdOpened() {
+//                        // Code to be executed when an ad opens an overlay that
+//                        // covers the screen.
+//                    }
+//
+//                    @Override
+//                    public void onAdLeftApplication() {
+//                        // Code to be executed when the user has left the app.
+//                    }
+//
+//                    @Override
+//                    public void onAdClosed() {
+//                        // Code to be executed when when the user is about to return
+//                        // to the app after tapping on an ad.
+//                    }
+//                });
+//
+//                com.google.android.gms.ads.AdRequest adRequest = new com.google.android.gms.ads.AdRequest.Builder().build();
+//                mAdView.loadAd(adRequest);
             }
 
             @Override

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/my_words_heading"
-            android:background="#B2B2B2"
+            android:background="#B0B0B0"
             android:paddingLeft="20dp"
             android:paddingStart="20dp"
             android:paddingRight="10dp"

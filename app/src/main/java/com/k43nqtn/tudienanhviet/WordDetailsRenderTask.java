@@ -184,26 +184,34 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
 
                                 // Synonyms
                                 if (synonyms.length() > 0) {
-                                    String synonymsText;
-                                    if (synonyms.length() > 1) {
-                                        synonymsText = "~ " + synonyms.getString(0);
-                                        for (int j = 1; j < synonyms.length(); j++) {
-                                            synonymsText += ", " + synonyms.getString(j);
+                                    ArrayList<String> synonymList = new ArrayList<>();
+                                    for (int j = 1; j < synonyms.length(); j++) {
+                                        if (synonyms.getString(j).toLowerCase().compareTo(syn.toLowerCase()) != 0) {
+                                            synonymList.add(synonyms.getString(j));
                                         }
-                                    } else {
-                                        synonymsText = "~ " + synonyms.getString(0);
                                     }
-                                    TextView synonymsView = new TextView(context);
-                                    LinearLayout.LayoutParams antonymLayoutParams = new LinearLayout.LayoutParams(
-                                            LinearLayout.LayoutParams.MATCH_PARENT,
-                                            LinearLayout.LayoutParams.WRAP_CONTENT
-                                    );
-                                    setLineStyle_synonyms(synonymsView, antonymLayoutParams);
-                                    synonymsView.setText(synonymsText);
-                                    if (syn_title_like_word) {
-                                        accurateItems.add(synonymsView);
-                                    } else {
-                                        similarItems.add(synonymsView);
+                                    if (synonymList.size() > 0) {
+                                        String synonymsText;
+                                        if (synonymList.size() > 1) {
+                                            synonymsText = "~ " + synonymList.get(0);
+                                            for (int j = 1; j < synonymList.size(); j++) {
+                                                synonymsText += ", " + synonymList.get(j);
+                                            }
+                                        } else {
+                                            synonymsText = "~ " + synonymList.get(0);
+                                        }
+                                        TextView synonymsView = new TextView(context);
+                                        LinearLayout.LayoutParams antonymLayoutParams = new LinearLayout.LayoutParams(
+                                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                                LinearLayout.LayoutParams.WRAP_CONTENT
+                                        );
+                                        setLineStyle_synonyms(synonymsView, antonymLayoutParams);
+                                        synonymsView.setText(synonymsText);
+                                        if (syn_title_like_word) {
+                                            accurateItems.add(synonymsView);
+                                        } else {
+                                            similarItems.add(synonymsView);
+                                        }
                                     }
                                 }
                                 
@@ -288,7 +296,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                             );
 
                             if (dictTitle.compareTo(DictDbContract.TITLE_EV_1) == 0
-                                || dictTitle.compareTo(DictDbContract.TITLE_EV_2) == 0
+//                                || dictTitle.compareTo(DictDbContract.TITLE_EV_2) == 0
                                 || dictTitle.compareTo(DictDbContract.TITLE_VE_1) == 0
                                 || dictTitle.compareTo(DictDbContract.TITLE_VE_2) == 0
                             ) {

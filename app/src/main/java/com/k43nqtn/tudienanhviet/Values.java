@@ -22,6 +22,7 @@ class Values {
     int DP_5;
     int DP_10;
     int DP_12;
+    int DP_13;
     int DP_15;
     int DP_20;
 
@@ -40,6 +41,7 @@ class Values {
         DP_5 = dpToPx(5);
         DP_10 = dpToPx(10);
         DP_12 = dpToPx(12);
+        DP_13 = dpToPx(13);
         DP_15 = dpToPx(15);
         DP_20 = dpToPx(20);
     }

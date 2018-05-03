@@ -301,9 +301,9 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
         btn.setMinHeight(0);
         btn.setMinimumWidth(0);
         btn.setMinimumHeight(0);
-        btn.setTextSize(12);
+        btn.setTextSize(13);
         btn.setCompoundDrawablePadding(values.DP_5);
-        btn.setPadding(values.DP_12, values.DP_12, values.DP_12, values.DP_12);
+        btn.setPadding(values.DP_13, values.DP_12, values.DP_13, values.DP_12);
     }
 
     private boolean isNetworkAvailable() {

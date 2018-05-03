@@ -2,9 +2,6 @@ package com.k43nqtn.tudienanhviet;
 
 import android.provider.BaseColumns;
 
-/**
- * Created by User on 3/13/2018.
- */
 
 final class OpenDbContract {
     static final String DB_NAME = "open.db";

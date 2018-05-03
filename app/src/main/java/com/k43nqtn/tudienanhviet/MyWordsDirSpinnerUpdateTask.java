@@ -7,9 +7,6 @@ import android.os.AsyncTask;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-/**
- * Created by User on 4/29/2018.
- */
 
 class MyWordsDirSpinnerUpdateTask extends AsyncTask<Void, Void, ArrayAdapter> {
     Context context;

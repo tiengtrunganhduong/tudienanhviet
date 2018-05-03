@@ -8,9 +8,6 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.Button;
 
-/**
- * Created by User on 4/6/2018.
- */
 
 class MyWordSiblingsSetupTask extends AsyncTask<Void, Void, Void> {
     Context context;

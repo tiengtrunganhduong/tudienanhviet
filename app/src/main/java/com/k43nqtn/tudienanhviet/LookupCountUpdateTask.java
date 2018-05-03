@@ -10,9 +10,6 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by User on 4/6/2018.
- */
 
 class LookupCountUpdateTask extends AsyncTask<Void, Void, Void> {
     Context context;

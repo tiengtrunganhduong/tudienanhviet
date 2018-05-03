@@ -5,9 +5,6 @@ import android.os.AsyncTask;
 
 import java.io.File;
 
-/**
- * Created by User on 4/29/2018.
- */
 
 class OldDbDeleteTask extends AsyncTask<Void, Void, Void> {
     Context context;

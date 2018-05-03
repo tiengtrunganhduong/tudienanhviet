@@ -13,9 +13,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by User on 4/17/2018.
- */
 
 public class SuggestionArrayAdapter extends ArrayAdapter<HashMap<String, String>> {
     Context context;

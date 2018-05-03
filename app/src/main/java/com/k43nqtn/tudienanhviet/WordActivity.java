@@ -99,13 +99,7 @@ public class WordActivity extends AppCompatActivity {
 
         initNativeAd();
 
-//        deleteOldDatabasesAsync();
     }
-
-//    private void deleteOldDatabasesAsync() {
-//        OldDbDeleteTask oldDbDeleteTask = new OldDbDeleteTask(this, "dict.db");
-//        oldDbDeleteTask.execute();
-//    }
 
     private void initNativeAd() {
         // Facebook audience network - native ads

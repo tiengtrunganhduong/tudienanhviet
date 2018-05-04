@@ -64,6 +64,7 @@ public class WordActivity extends AppCompatActivity {
 
         context = this;
         myApplication = (MyApplication) this.getApplication();
+        initDatabases();
 
         detailsContainer = (LinearLayout) findViewById(R.id.details);
         speechButtonsScroller = (HorizontalScrollView) findViewById(R.id.speeches_scroller);
@@ -99,6 +100,17 @@ public class WordActivity extends AppCompatActivity {
 
         initNativeAd();
 
+    }
+
+    private void initDatabases() {
+        if (myApplication.dictRdb == null) {
+            myApplication.dictRdb = (new DictDbHelper(this)).getReadableDatabase();
+        }
+        if (myApplication.openRdb == null || myApplication.openWdb == null) {
+            OpenDbHelper openDbHelper = new OpenDbHelper(this);
+            myApplication.openRdb = openDbHelper.getReadableDatabase();
+            myApplication.openWdb = openDbHelper.getWritableDatabase();
+        }
     }
 
     private void initNativeAd() {

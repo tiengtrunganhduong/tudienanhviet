@@ -61,8 +61,10 @@ class LookupCountUpdateTask extends AsyncTask<Void, Void, Void> {
                         ,
                         new String[]{ String.valueOf(id) }
                 );
-                updater.moveToFirst();
-                updater.close();
+                if (updater != null) {
+                    updater.moveToFirst();
+                    updater.close();
+                }
 
                 lookupCountAlertMsg = String.format(
                         context.getResources().getString(R.string.lookup_count_message),

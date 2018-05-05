@@ -83,7 +83,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
 
         if (cursor != null) {
 
-            final int ALWAYS_VIEW_MAX_LINES = 10;
+            final int VIEW_DEFAULT_MAX_LINES = 10;
             final int SEE_MORE_LIST_MIN_LINES = 5;
 
             while (cursor.moveToNext()) {
@@ -247,7 +247,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                             }
                             int k = 0;
                             for (View view: accurateItems) {
-                                if (k > ALWAYS_VIEW_MAX_LINES) {
+                                if (k > VIEW_DEFAULT_MAX_LINES) {
                                     seeMoreList.add(view);
                                 } else {
                                     dictContainer.addView(view);
@@ -263,7 +263,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                                 setLineStyle_similarTitle(similarTitle, similarTitleLayoutParams);
                                 similarTitle.setText(similarTitleText);
 
-                                if (k > ALWAYS_VIEW_MAX_LINES) {
+                                if (k > VIEW_DEFAULT_MAX_LINES) {
                                     seeMoreList.add(similarTitle);
                                 } else {
                                     dictContainer.addView(similarTitle);
@@ -271,7 +271,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                                 k++;
 
                                 for (View view: similarItems) {
-                                    if (k > ALWAYS_VIEW_MAX_LINES) {
+                                    if (k > VIEW_DEFAULT_MAX_LINES) {
                                         seeMoreList.add(view);
                                     } else {
                                         dictContainer.addView(view);
@@ -347,7 +347,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
 
                             meaningLineView.setText(line);
 
-                            if (i > ALWAYS_VIEW_MAX_LINES) {
+                            if (i > VIEW_DEFAULT_MAX_LINES) {
                                 seeMoreList.add(meaningLineView);
                             } else {
                                 dictContainer.addView(meaningLineView);
@@ -437,7 +437,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
     private void setLineStyle_wordType(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
-        textView.setTextColor(values.COLOR_GREY_MD);
+        textView.setTextColor(values.COLOR_GREY_DK);
         textView.setLayoutParams(layoutParams);
     }
     private void setLineStyle_meaning(TextView textView, LinearLayout.LayoutParams layoutParams) {
@@ -450,7 +450,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
     private void setLineStyle_example(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(values.DP_20, values.DP_5, 0, 0);
         textView.setTextSize(16);
-        textView.setTextColor(values.COLOR_GREY);
+        textView.setTextColor(values.COLOR_GREY_MD);
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
@@ -458,7 +458,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         layoutParams.setMargins(values.DP_20, values.DP_5, 0, 0);
         textView.setTextSize(16);
         textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
-        textView.setTextColor(values.COLOR_GREY_DK);
+        textView.setTextColor(values.COLOR_GREY);
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
@@ -466,7 +466,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         layoutParams.setMargins(values.DP_20, values.DP_5, 0, 0);
         textView.setTextSize(16);
         textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
-        textView.setTextColor(values.COLOR_GREY_DK);
+        textView.setTextColor(values.COLOR_GREY);
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
@@ -487,14 +487,14 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setTextIsSelectable(true);
     }
     private void setLineStyle_specializedTitle(TextView textView, LinearLayout.LayoutParams layoutParams) {
-        layoutParams.setMargins(0, values.DP_15, 0, 0);
-        textView.setTextSize(15.5f);
+        layoutParams.setMargins(0, values.DP_10, 0, 0);
+        textView.setTextSize(15);
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
         textView.setTextColor(values.COLOR_YELLOW);
         textView.setLayoutParams(layoutParams);
     }
     private void setLineStyle_fieldTitle(TextView textView, LinearLayout.LayoutParams layoutParams) {
-        layoutParams.setMargins(0, values.DP_15, 0, 0);
+        layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTextSize(15);
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
         textView.setTextColor(values.COLOR_GREY);

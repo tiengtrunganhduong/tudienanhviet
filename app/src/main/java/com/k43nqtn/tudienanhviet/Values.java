@@ -17,6 +17,7 @@ class Values {
     int DP_3;
     int DP_5;
     int DP_10;
+    int DP_11;
     int DP_12;
     int DP_13;
     int DP_15;
@@ -29,13 +30,14 @@ class Values {
         COLOR_BLUE = Color.parseColor("#3366CC");
         COLOR_YELLOW = Color.parseColor("#E2A56F");
         COLOR_GREY = Color.parseColor("#969696");
-        COLOR_GREY_MD = Color.parseColor("#838383");
-        COLOR_GREY_DK = Color.parseColor("#757575");
+        COLOR_GREY_MD = Color.parseColor("#8A8A8A");
+        COLOR_GREY_DK = Color.parseColor("#808080");
         COLOR_GREY_BG = Color.parseColor("#999999");
         DP_2 = dpToPx(2);
         DP_3 = dpToPx(3);
         DP_5 = dpToPx(5);
         DP_10 = dpToPx(10);
+        DP_11 = dpToPx(11);
         DP_12 = dpToPx(12);
         DP_13 = dpToPx(13);
         DP_15 = dpToPx(15);

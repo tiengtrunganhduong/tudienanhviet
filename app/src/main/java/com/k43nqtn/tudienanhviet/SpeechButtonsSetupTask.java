@@ -1,7 +1,9 @@
 package com.k43nqtn.tudienanhviet;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
     private MediaPlayer mediaPlayer;
     private TextToSpeech tts;
     private Values values;
+    private Drawable ic_speaker, ic_play, ic_play_pending, ic_play_done, ic_play_error;
 
     SpeechButtonsSetupTask(Context context,
                            String word,
@@ -54,12 +58,17 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
 
         mediaPlayer = new MediaPlayer();
 
+        ic_speaker = ContextCompat.getDrawable(context, R.drawable.ic_speaker);
+        ic_play = ContextCompat.getDrawable(context, R.drawable.ic_play);
+        ic_play_pending = ContextCompat.getDrawable(context, R.drawable.ic_play_pending);
+        ic_play_done = ContextCompat.getDrawable(context, R.drawable.ic_play_done);
+        ic_play_error = ContextCompat.getDrawable(context, R.drawable.ic_play_error);
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
 
-        if (lang != null && lang.compareTo("en") == 0) {
+        if (lang != null && lang.compareTo("en") == 0 && isNetworkAvailable()) {
             Cursor cursor = rdb.rawQuery(
                     " SELECT "
                     + DictDbContract.EnPronTable.COLUMN_NAME_ENCODED + ", "
@@ -103,108 +112,15 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
-
         if (lang != null && lang.compareTo("en") == 0) {
             speechButtonsScroller.setVisibility(View.VISIBLE);
 
-            final Drawable ic_speaker = ContextCompat.getDrawable(context, R.drawable.ic_speaker);
-
-            final Button autoSpeechButton = new Button(context);
-            autoSpeechButton.setText("AUTO");
-            setupSpeechButtonStyle(autoSpeechButton);
-            autoSpeechButton.setCompoundDrawablesWithIntrinsicBounds(ic_speaker, null, null, null);
-
-            speechButtonsContainer.addView(autoSpeechButton);
-
-//            final Button ukTtsButton = new Button(context);
-//            ukTtsButton.setCompoundDrawablesWithIntrinsicBounds(ic_speaker, null, null, null);
-//            ukTtsButton.setText("UK");
-//            ukTtsButton.setLayoutParams(speechBtnLayoutParams);
-//            speechButtonsContainer.addView(ukTtsButton);
-
-//            final Button usTtsButton = new Button(context);
-//            usTtsButton.setCompoundDrawablesWithIntrinsicBounds(ic_speaker, null, null, null);
-//            usTtsButton.setText("US");
-//            usTtsButton.setLayoutParams(speechBtnLayoutParams);
-//            speechButtonsContainer.addView(usTtsButton, 1);
-
-            tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if (status == TextToSpeech.SUCCESS) {
-
-                        autoSpeechButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                tts.setLanguage(Locale.UK);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    tts.speak(word, TextToSpeech.QUEUE_FLUSH, null, null);
-                                } else {
-                                    tts.speak(word, TextToSpeech.QUEUE_FLUSH, null);
-                                }
-                            }
-                        });
-
-//                        ukTtsButton.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                tts.setLanguage(Locale.UK);
-//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                    tts.speak(word, TextToSpeech.QUEUE_FLUSH, null, null);
-//                                } else {
-//                                    tts.speak(word, TextToSpeech.QUEUE_FLUSH, null);
-//                                }
-//                            }
-//                        });
-
-//                        usTtsButton.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                tts.setLanguage(Locale.US);
-//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                                    tts.speak(word, TextToSpeech.QUEUE_FLUSH, null, null);
-//                                } else {
-//                                    tts.speak(word, TextToSpeech.QUEUE_FLUSH, null);
-//                                }
-//                            }
-//                        });
-                    } else {
-
-                        autoSpeechButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                alert(R.string.no_tts_title, R.string.no_tts_message);
-                            }
-                        });
-
-//                        ukTtsButton.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                alert(R.string.no_tts_title, R.string.no_tts_message);
-//                            }
-//                        });
-
-//                        usTtsButton.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                alert(R.string.no_tts_title, R.string.no_tts_message);
-//                            }
-//                        });
-                    }
-                }
-            });
-
-            if (encoded_word != null && pron_paths.length > 0) {
-                final Drawable ic_play = ContextCompat.getDrawable(context, R.drawable.ic_play);
-                final Drawable ic_play_pending = ContextCompat.getDrawable(context, R.drawable.ic_play_pending);
-                final Drawable ic_play_done = ContextCompat.getDrawable(context, R.drawable.ic_play_done);
-                final Drawable ic_play_error = ContextCompat.getDrawable(context, R.drawable.ic_play_error);
+            if (encoded_word != null && pron_paths != null && pron_paths.length > 0) {
+                final ArrayList<Button> speechButtonList = new ArrayList<>();
 
                 String p1 = encoded_word.substring(0, Math.min(1, encoded_word.length()));
                 String p3 = encoded_word.substring(0, Math.min(3, encoded_word.length()));
                 String p5 = encoded_word.substring(0, Math.min(5, encoded_word.length()));
-
-                final ArrayList<Button> speechBtnList = new ArrayList<>();
 
                 for (String path: pron_paths) {
 
@@ -218,36 +134,36 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
                             path, p1, p3, p5, encoded_word
                     );
 
-                    final Button speechBtn = new Button(context);
-                    speechBtnList.add(speechBtn);
-                    speechBtn.setCompoundDrawablesWithIntrinsicBounds(ic_play, null, null, null);
-                    setupSpeechButtonStyle(speechBtn);
+                    final Button speechButton = new Button(context);
+                    speechButtonList.add(speechButton);
+                    speechButton.setCompoundDrawablesWithIntrinsicBounds(ic_play, null, null, null);
+                    setupSpeechButtonStyle(speechButton);
                     switch (path_parts[1]) {
                         case "1":
-                            speechBtn.setText(context.getResources().getString(R.string.pron_uk));
+                            speechButton.setText(context.getResources().getString(R.string.pron_uk));
                             break;
                         case "2":
-                            speechBtn.setText(context.getResources().getString(R.string.pron_us));
+                            speechButton.setText(context.getResources().getString(R.string.pron_us));
                             break;
                         case "0":
                         default:
-                            speechBtn.setText(context.getResources().getString(R.string.pron_unknown));
+                            speechButton.setText(context.getResources().getString(R.string.pron_unknown));
                             break;
                     }
-                    speechBtn.setOnClickListener(new View.OnClickListener() {
+                    speechButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if (isNetworkAvailable()) {
 
-                                for (Button _speechBtn : speechBtnList) {
-                                    if (!_speechBtn.isClickable()) {
-                                        _speechBtn.setCompoundDrawablesWithIntrinsicBounds(ic_play, null, null, null);
-                                        _speechBtn.setClickable(true);
+                                for (Button _speechButton : speechButtonList) {
+                                    if (!_speechButton.isClickable()) {
+                                        _speechButton.setCompoundDrawablesWithIntrinsicBounds(ic_play, null, null, null);
+                                        _speechButton.setClickable(true);
                                     }
                                 }
 
-                                speechBtn.setCompoundDrawablesWithIntrinsicBounds(ic_play_pending, null, null, null);
-                                speechBtn.setClickable(false);
+                                speechButton.setCompoundDrawablesWithIntrinsicBounds(ic_play_pending, null, null, null);
+                                speechButton.setClickable(false);
 
                                 try {
                                     mediaPlayer.release();
@@ -257,15 +173,15 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
                                         @Override
                                         public void onPrepared(MediaPlayer mediaPlayer) {
                                             mediaPlayer.start();
-                                            speechBtn.setCompoundDrawablesWithIntrinsicBounds(ic_play_done, null, null, null);
-                                            speechBtn.setClickable(true);
+                                            speechButton.setCompoundDrawablesWithIntrinsicBounds(ic_play_done, null, null, null);
+                                            speechButton.setClickable(true);
                                         }
                                     });
                                     mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                                         @Override
                                         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                                            speechBtn.setCompoundDrawablesWithIntrinsicBounds(ic_play_error, null, null, null);
-                                            speechBtn.setClickable(true);
+                                            speechButton.setCompoundDrawablesWithIntrinsicBounds(ic_play_error, null, null, null);
+                                            speechButton.setClickable(true);
                                             return false;
                                         }
                                     });
@@ -279,11 +195,70 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
                             }
                         }
                     });
-                    speechButtonsContainer.addView(speechBtn);
+                    speechButtonsContainer.addView(speechButton);
 
                 }
+                
             }
+
+            if (pron_paths == null || pron_paths.length < 3) {
+                final Button autoSpeechButton = new Button(context);
+                setupAutoSpeechButtonStyle(autoSpeechButton);
+                autoSpeechButton.setText(context.getResources().getString(R.string.auto_speech));
+                autoSpeechButton.setCompoundDrawablesWithIntrinsicBounds(ic_speaker, null, null, null);
+
+                speechButtonsContainer.addView(autoSpeechButton);
+
+                tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status == TextToSpeech.SUCCESS) {
+
+                            autoSpeechButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    tts.setLanguage(Locale.UK);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        tts.speak(word, TextToSpeech.QUEUE_FLUSH, null, null);
+                                    } else {
+                                        tts.speak(word, TextToSpeech.QUEUE_FLUSH, null);
+                                    }
+                                }
+                            });
+
+                        } else {
+
+                            autoSpeechButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    alert(R.string.no_tts_title, R.string.no_tts_message);
+                                }
+                            });
+
+                        }
+                    }
+                });
+            }
+
         }
+
+    }
+
+    private void setupAutoSpeechButtonStyle(Button btn) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(0, 0, values.DP_3, 0);
+        btn.setLayoutParams(layoutParams);
+        btn.setMinWidth(0);
+        btn.setMinHeight(0);
+        btn.setMinimumWidth(0);
+        btn.setMinimumHeight(0);
+        btn.setTextSize(11.5f);
+        btn.setAllCaps(false);
+        btn.setCompoundDrawablePadding(values.DP_5);
+        btn.setPadding(values.DP_13, values.DP_12, values.DP_13, values.DP_12);
     }
 
     private void setupSpeechButtonStyle(Button btn) {
@@ -298,6 +273,7 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
         btn.setMinimumWidth(0);
         btn.setMinimumHeight(0);
         btn.setTextSize(13);
+        btn.setAllCaps(false);
         btn.setCompoundDrawablePadding(values.DP_5);
         btn.setPadding(values.DP_13, values.DP_12, values.DP_13, values.DP_12);
     }

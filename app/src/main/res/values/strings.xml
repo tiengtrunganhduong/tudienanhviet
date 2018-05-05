@@ -25,19 +25,18 @@
     <string name="lookup_count_message">Bạn đã tra từ này %d lần</string>
     <string name="pronunciation_no_internet_connection_title">Không có kết nối Internet</string>
     <string name="pronunciation_no_internet_connection_message">
-        Phần phát âm được thu lại từ giọng đọc thật của người bản xứ và lưu trữ trên máy chủ
-        (do dung lượng rất lớn nên không lưu offline được).
+        Phần phát âm được thu âm lại và lưu trữ trên máy chủ, do dung lượng rất lớn nên không lưu được offline.
         Bạn hãy bật kết nối Internet (WIFI, 3G hoặc 4G) để nghe được nhé!
     </string>
     <string name="pron_uk">UK</string>
     <string name="pron_us">US</string>
     <string name="pron_unknown">••</string>
+    <string name="auto_speech">AUTO SPEECH</string>
     <string name="no_tts_title">
-        Điện thoại của bạn không hỗ trợ phát âm tự động.
+        Thiết bị của bạn không hỗ trợ phát âm tự động
     </string>
     <string name="no_tts_message">
-        Vui lòng sử dụng phát âm được lưu sẵn trên máy chủ
-        bằng cách chạm vào nút bấm có biểu tượng Play (hình tam giác).
+        Bạn hãy bật kết nối Internet (WIFI, 3G hoặc 4G) để nghe phát âm online nhé!
     </string>
     <string name="view_more">Xem thêm</string>
     <string name="view_less">Thu gọn</string>

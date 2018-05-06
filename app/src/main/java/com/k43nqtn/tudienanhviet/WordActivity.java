@@ -329,14 +329,14 @@ public class WordActivity extends AppCompatActivity {
                     detailsContainer)
             ).execute();
 
-//            (new WordDetailsRenderTask(
-//                    this,
-//                    word,
-//                    myApplication.dictRdb,
-//                    DictDbContract.TABLE_EV_2,
-//                    DictDbContract.TITLE_EV_2,
-//                    detailsContainer)
-//            ).execute();
+            (new WordDetailsRenderTask(
+                    this,
+                    word,
+                    myApplication.dictRdb,
+                    DictDbContract.TABLE_EV_2,
+                    DictDbContract.TITLE_EV_2,
+                    detailsContainer)
+            ).execute();
 
             (new WordDetailsRenderTask(
                     this,

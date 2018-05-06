@@ -284,9 +284,12 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                             e.printStackTrace();
                         }
                     } else {
-                        String[] meaningLines = meaning.split("\n");
+                        String[] meaningLines = meaning
+                                .replaceAll("(?i)@" + word.substring(0, 2), "\n@" + word.substring(0, 2).toLowerCase())
+                                .split("\n");
                         for (int i = 0; i < meaningLines.length; i++) {
                             String line = meaningLines[i];
+//                            Spanned spannedLine = null;
                             if (line.trim().compareTo("") == 0) {
                                 continue;
                             }
@@ -298,13 +301,15 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                             );
 
                             if (dictTitle.compareTo(DictDbContract.TITLE_EV_1) == 0
-//                                || dictTitle.compareTo(DictDbContract.TITLE_EV_2) == 0
                                 || dictTitle.compareTo(DictDbContract.TITLE_VE_1) == 0
                                 || dictTitle.compareTo(DictDbContract.TITLE_VE_2) == 0
                             ) {
                                 switch (line.charAt(0)) {
                                     case '/':
                                         setLineStyle_spelling(meaningLineView, meaningLineLayoutParams);
+                                        break;
+                                    case '@':
+                                        setLineStyle_word(meaningLineView, meaningLineLayoutParams);
                                         break;
                                     case '*':
                                         line = "* " + line.substring(1).trim();
@@ -320,6 +325,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                                         if (plusPos > -1) {
                                             String leftStr = line.substring(0, plusPos).trim();
                                             String rightStr = line.substring(plusPos + 1).trim();
+//                                            spannedLine = Html.fromHtml(leftStr + ": <i>" + rightStr + "</i>");
                                             line = leftStr + ": " + rightStr;
                                         } else {
                                             line = line.trim();
@@ -330,12 +336,21 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                                         line = line.substring(1).trim();
                                         setLineStyle_idiom(meaningLineView, meaningLineLayoutParams);
                                         break;
-                                    case '&':
-                                        line = "Chuyên ngành " + line.substring(1).trim() + ":";
+                                    default:
+                                        setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                                }
+                            } else if (dictTitle.compareTo(DictDbContract.TITLE_EV_2) == 0) {
+                                switch (line.charAt(0)) {
+                                    case '-':
+                                        line = line.substring(1).trim();
+                                        setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                                        break;
+                                    case '*':
+                                        line = "* " + line.substring(1).trim();
                                         setLineStyle_specializedTitle(meaningLineView, meaningLineLayoutParams);
                                         break;
-                                    case '%':
-                                        line = "Lĩnh vực " + line.substring(1).trim() + ":";
+                                    case '+':
+                                        line = line.substring(1).trim() + ":";
                                         setLineStyle_fieldTitle(meaningLineView, meaningLineLayoutParams);
                                         break;
                                     default:
@@ -345,7 +360,11 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                                 setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
                             }
 
-                            meaningLineView.setText(line);
+//                            if (spannedLine != null) {
+//                                meaningLineView.setText(spannedLine);
+//                            } else {
+                                meaningLineView.setText(line);
+//                            }
 
                             if (i > VIEW_DEFAULT_MAX_LINES) {
                                 seeMoreList.add(meaningLineView);
@@ -412,7 +431,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
             cursor.close();
         }
     }
-    
+
     private TextView createHeadline(String text) {
         TextView divider = new TextView(context);
         LinearLayout.LayoutParams dividerLayoutParams = new LinearLayout.LayoutParams(
@@ -427,6 +446,15 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         return divider;
     }
 
+    private void setLineStyle_word(TextView textView, LinearLayout.LayoutParams layoutParams) {
+        layoutParams.setMargins(0, values.DP_10, 0, 0);
+        textView.setTextSize(16);
+        textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
+        textView.setTextColor(values.COLOR_YELLOW);
+        textView.setLayoutParams(layoutParams);
+        textView.setTextIsSelectable(true);
+    }
+
     private void setLineStyle_spelling(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTextColor(values.COLOR_RED);
@@ -436,6 +464,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
     }
     private void setLineStyle_wordType(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
+        textView.setTextSize(15);
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
         textView.setTextColor(values.COLOR_GREY_DK);
         textView.setLayoutParams(layoutParams);
@@ -495,10 +524,11 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
     }
     private void setLineStyle_fieldTitle(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
-        textView.setTextSize(15);
-        textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
-        textView.setTextColor(values.COLOR_GREY);
+        textView.setTextSize(16);
+        textView.setTypeface(textView.getTypeface(), Typeface.BOLD_ITALIC);
+        textView.setTextColor(values.COLOR_BLUE);
         textView.setLayoutParams(layoutParams);
+        textView.setTextIsSelectable(true);
     }
 
 }

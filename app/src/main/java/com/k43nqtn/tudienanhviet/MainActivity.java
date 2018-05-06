@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
     Spinner my_words_dir_spinner;
     int my_words_sort_order = 0;
     int my_words_dir = 0;
+    LinearLayout adContainer;
     AdView adView;
+    com.google.android.gms.ads.AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         list_my_words = (ListView) findViewById(R.id.list_my_words);
         my_words_sort_spinner = (Spinner) findViewById(R.id.my_words_sort_spinner);
         my_words_dir_spinner = (Spinner) findViewById(R.id.my_words_dir_spinner);
+        adContainer = (LinearLayout) findViewById(R.id.ad_container);
 
 
         initDatabases();
@@ -388,18 +391,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initAds() {
 
-        // Instantiate an AdView view
-        adView = new AdView(this, "591787627837331_591787964503964", AdSize.BANNER_HEIGHT_50);
-
-        // Find the Ad Container
-        final LinearLayout adContainer = (LinearLayout) findViewById(R.id.ad_container);
-
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onError(Ad ad, AdError adError) {
-                // Replace wic/LAdmob
                 com.google.android.gms.ads.MobileAds.initialize(context, "ca-app-pub-3126660852581586~6866555592");
-                final com.google.android.gms.ads.AdView mAdView = (com.google.android.gms.ads.AdView) new com.google.android.gms.ads.AdView(context);
+                mAdView = new com.google.android.gms.ads.AdView(context);
                 mAdView.setAdSize(com.google.android.gms.ads.AdSize.SMART_BANNER);
                 mAdView.setAdUnitId("ca-app-pub-3126660852581586/9642614948");
 
@@ -416,6 +409,33 @@ public class MainActivity extends AppCompatActivity {
                     public void onAdFailedToLoad(int errorCode) {
                         // Code to be executed when an ad request fails.
                         adContainer.removeAllViews();
+                        // Instantiate an AdView view
+                        adView = new AdView(context, "591787627837331_591787964503964", AdSize.BANNER_HEIGHT_50);
+                        adView.setAdListener(new AdListener() {
+                            @Override
+                            public void onError(Ad ad, AdError adError) {
+                            }
+
+                            @Override
+                            public void onAdLoaded(Ad ad) {
+                                // Ad loaded callback
+                                // Add the ad view to your activity layout
+                                adContainer.addView(adView);
+                            }
+
+                            @Override
+                            public void onAdClicked(Ad ad) {
+                                // Ad clicked callback
+                            }
+
+                            @Override
+                            public void onLoggingImpression(Ad ad) {
+                                // Ad impression logged callback
+                            }
+                        });
+
+                        // Request an ad
+                        adView.loadAd();
                     }
 
                     @Override
@@ -438,28 +458,7 @@ public class MainActivity extends AppCompatActivity {
 
                 com.google.android.gms.ads.AdRequest adRequest = new com.google.android.gms.ads.AdRequest.Builder().build();
                 mAdView.loadAd(adRequest);
-            }
 
-            @Override
-            public void onAdLoaded(Ad ad) {
-                // Ad loaded callback
-                // Add the ad view to your activity layout
-                adContainer.addView(adView);
-            }
-
-            @Override
-            public void onAdClicked(Ad ad) {
-                // Ad clicked callback
-            }
-
-            @Override
-            public void onLoggingImpression(Ad ad) {
-                // Ad impression logged callback
-            }
-        });
-
-        // Request an ad
-        adView.loadAd();
     }
 
 //    private void openDialogRestartRequest() {

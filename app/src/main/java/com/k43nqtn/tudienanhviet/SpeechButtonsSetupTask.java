@@ -69,11 +69,15 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         if (lang != null && lang.compareTo("en") == 0 && isNetworkAvailable()) {
+
+            int tableIndex = TableUtils.getTableIndex(word);
+            String tableFullName = DictDbContract.getTableName(DictDbContract.EnPronTable.TABLE_NAME, tableIndex);
+
             Cursor cursor = rdb.rawQuery(
                     " SELECT "
                     + DictDbContract.EnPronTable.COLUMN_NAME_ENCODED + ", "
                     + DictDbContract.EnPronTable.COLUMN_NAME_PATHS
-                    + " FROM " + DictDbContract.EnPronTable.TABLE_NAME
+                    + " FROM " + tableFullName
                     + " WHERE " + DictDbContract.EnPronTable.COLUMN_NAME_WORD + " LIKE @word"
                     + " LIMIT 1",
                     new String[]{ word }

@@ -42,6 +42,6 @@ final class WordsDbContract {
 //    public static final String TABLE_26 = "words_26";
 
     static String getTableName(int index) {
-        return "words_" + index;
+        return "words__" + index;
     }
 }

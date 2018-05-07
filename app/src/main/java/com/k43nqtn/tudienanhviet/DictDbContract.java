@@ -30,4 +30,8 @@ final class DictDbContract {
         static final String COLUMN_NAME_ENCODED = "encoded";
         static final String COLUMN_NAME_PATHS = "paths";
     }
+
+    static String getTableName(String baseName, int index) {
+        return baseName + "__" + index;
+    }
 }

@@ -97,14 +97,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupSuggestionsList() {
-        final String letters = "abcdefghijklmnopqrstuvwxyz#";
-        final String a_based = "àáạảãâầấậẩẫăằắặẳẵ";
-        final String e_based = "èéẹẻẽêềếệểễ";
-        final String i_based = "ìíịỉĩ";
-        final String o_based = "òóọỏõôồốộổỗơờớợởỡ";
-        final String u_based = "ùúụủũưừứựửữ";
-        final String y_based = "ỳýỵỷỹ";
-        final String d_based = "đ";
+//        final String letters = "abcdefghijklmnopqrstuvwxyz#";
+//        final String a_based = "àáạảãâầấậẩẫăằắặẳẵ";
+//        final String e_based = "èéẹẻẽêềếệểễ";
+//        final String i_based = "ìíịỉĩ";
+//        final String o_based = "òóọỏõôồốộổỗơờớợởỡ";
+//        final String u_based = "ùúụủũưừứựửữ";
+//        final String y_based = "ỳýỵỷỹ";
+//        final String d_based = "đ";
 
         cursorAdapter = new SuggestionCursorAdapter(this, null);
         cursorAdapter.setFilterQueryProvider(new FilterQueryProvider() {
@@ -115,27 +115,27 @@ public class MainActivity extends AppCompatActivity {
                 if (search.compareTo("") == 0) {
                     cursor = null;
                 } else {
-                    char char0 = search.charAt(0);
-                    if (letters.indexOf(char0) == -1) {
-                        if (a_based.indexOf(char0) > -1) {
-                            char0 = 'a';
-                        } else if (e_based.indexOf(char0) > -1) {
-                            char0 = 'e';
-                        } else if (i_based.indexOf(char0) > -1) {
-                            char0 = 'i';
-                        } else if (o_based.indexOf(char0) > -1) {
-                            char0 = 'o';
-                        } else if (u_based.indexOf(char0) > -1) {
-                            char0 = 'u';
-                        } else if (y_based.indexOf(char0) > -1) {
-                            char0 = 'y';
-                        } else if (d_based.indexOf(char0) > -1) {
-                            char0 = 'd';
-                        } else {
-                            char0 = '#';
-                        }
-                    }
-                    int tableIndex = letters.indexOf(char0);
+//                    char char0 = search.charAt(0);
+//                    if (letters.indexOf(char0) == -1) {
+//                        if (a_based.indexOf(char0) > -1) {
+//                            char0 = 'a';
+//                        } else if (e_based.indexOf(char0) > -1) {
+//                            char0 = 'e';
+//                        } else if (i_based.indexOf(char0) > -1) {
+//                            char0 = 'i';
+//                        } else if (o_based.indexOf(char0) > -1) {
+//                            char0 = 'o';
+//                        } else if (u_based.indexOf(char0) > -1) {
+//                            char0 = 'u';
+//                        } else if (y_based.indexOf(char0) > -1) {
+//                            char0 = 'y';
+//                        } else if (d_based.indexOf(char0) > -1) {
+//                            char0 = 'd';
+//                        } else {
+//                            char0 = '#';
+//                        }
+//                    }
+                    int tableIndex = TableUtils.getTableIndex(search);
                     String tableName = WordsDbContract.getTableName(tableIndex);
                     cursor = myApplication.wordsRdb.rawQuery(
                             " SELECT "

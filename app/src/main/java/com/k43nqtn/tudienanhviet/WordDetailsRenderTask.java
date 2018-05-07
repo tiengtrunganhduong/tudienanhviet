@@ -67,10 +67,13 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         this.dropUpIcon = ContextCompat.getDrawable(context, R.drawable.ic_arrow_drop_up);
         this.dropTransparentIcon = ContextCompat.getDrawable(context, R.drawable.ic_arrow_drop_transparent);
 
+        int tableIndex = TableUtils.getTableIndex(word);
+        String tableFullName = DictDbContract.getTableName(tableName, tableIndex);
+
         String query = " SELECT "
                 + DictDbContract.COLUMN_WORD + ", "
                 + DictDbContract.COLUMN_DETAILS
-                + " FROM " + tableName
+                + " FROM " + tableFullName
                 + " WHERE " + DictDbContract.COLUMN_WORD + " LIKE @word";
 
         return rdb.rawQuery(query, new String[]{word});

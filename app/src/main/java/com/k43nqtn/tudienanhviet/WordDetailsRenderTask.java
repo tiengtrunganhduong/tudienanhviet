@@ -42,11 +42,11 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
 
 
     WordDetailsRenderTask(Context context,
-                                 String word,
-                                 SQLiteDatabase rdb,
-                                 String tableName,
-                                 String dictTitle,
-                                 LinearLayout detailsContainer
+                          String word,
+                          SQLiteDatabase rdb,
+                          String tableName,
+                          String dictTitle,
+                          LinearLayout detailsContainer
     ) {
         this.context = context;
         this.word = word;
@@ -68,367 +68,368 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         this.dropTransparentIcon = ContextCompat.getDrawable(context, R.drawable.ic_arrow_drop_transparent);
 
         String query = " SELECT "
-                    + DictDbContract.COLUMN_WORD + ", "
-                    + DictDbContract.COLUMN_DETAILS
-                    + " FROM " + tableName
-                    + " WHERE " + DictDbContract.COLUMN_WORD + " LIKE @word"
-            ;
+                + DictDbContract.COLUMN_WORD + ", "
+                + DictDbContract.COLUMN_DETAILS
+                + " FROM " + tableName
+                + " WHERE " + DictDbContract.COLUMN_WORD + " LIKE @word";
 
-        return rdb.rawQuery(query, new String[] { word });
+        return rdb.rawQuery(query, new String[]{word});
     }
 
     @Override
     protected void onPostExecute(Cursor cursor) {
         super.onPostExecute(cursor);
 
+        final int VIEW_DEFAULT_MAX_LINES = 10;
+        final int SEE_MORE_LIST_MIN_LINES = 5;
+
+        String meaning = "";
+
         if (cursor != null) {
-
-            final int VIEW_DEFAULT_MAX_LINES = 10;
-            final int SEE_MORE_LIST_MIN_LINES = 5;
-
+            int dictIndex = -1;
             while (cursor.moveToNext()) {
-                final LinearLayout dictContainer = new LinearLayout(context);
-                dictContainer.setOrientation(LinearLayout.VERTICAL);
-                detailsContainer.addView(dictContainer);
+                dictIndex++;
 
-                dictContainer.addView(createHeadline(dictTitle));
+                if (dictIndex > 0) {
+                    meaning += "\n@" + word + "\n";
+                }
 
-                String meaning = cursor.getString(cursor.getColumnIndex(DictDbContract.COLUMN_DETAILS));
-                meaning = meaning.trim();
+                meaning += cursor.getString(cursor.getColumnIndex(DictDbContract.COLUMN_DETAILS)).trim();
+            }
+            cursor.close();
+        }
 
-                if (meaning.compareTo("") != 0) {
-                    final ArrayList<View> seeMoreList = new ArrayList<>();
-                    if (dictTitle.compareTo(DictDbContract.TITLE_E_1) == 0) {
-                        try {
-                            JSONArray details = new JSONArray(meaning);
-                            ArrayList<View> accurateItems = new ArrayList<>();
-                            ArrayList<View> similarItems = new ArrayList<>();
-                            for (int i = 0; i < details.length(); i++) {
-                                JSONArray detail = details.getJSONArray(i);
+        if (meaning.compareTo("") != 0) {
+            final LinearLayout dictContainer = new LinearLayout(context);
+            dictContainer.setOrientation(LinearLayout.VERTICAL);
+            detailsContainer.addView(dictContainer);
+            dictContainer.addView(createHeadline(dictTitle));
 
-                                String syn = detail.getString(0);
-                                String def = detail.getString(1);
-                                JSONArray examples = detail.getJSONArray(2);
-                                JSONArray synonyms = detail.getJSONArray(3);
-                                JSONArray antonyms = detail.getJSONArray(4);
+            final ArrayList<View> seeMoreList = new ArrayList<>();
+            if (dictTitle.compareTo(DictDbContract.TITLE_E_1) == 0) {
+                try {
+                    JSONArray details = new JSONArray(meaning);
+                    ArrayList<View> accurateItems = new ArrayList<>();
+                    ArrayList<View> similarItems = new ArrayList<>();
+                    for (int i = 0; i < details.length(); i++) {
+                        JSONArray detail = details.getJSONArray(i);
+
+                        String syn = detail.getString(0);
+                        String def = detail.getString(1);
+                        JSONArray examples = detail.getJSONArray(2);
+                        JSONArray synonyms = detail.getJSONArray(3);
+                        JSONArray antonyms = detail.getJSONArray(4);
 
 
-                                String[] syn_parts = syn.split("\\.");
-                                String syn_title;
+                        String[] syn_parts = syn.split("\\.");
+                        String syn_title;
 //                                Log.wtf("SYN LEN", syn_parts.length + "");
 //                                String word_type_html = "";
-                                if (syn_parts.length > 2) {
-                                    syn_title = syn_parts[0];
-                                    for (int j = 1; j < syn_parts.length - 2; j++) {
-                                        syn_title += "." + syn_parts[j];
-                                    }
+                        if (syn_parts.length > 2) {
+                            syn_title = syn_parts[0];
+                            for (int j = 1; j < syn_parts.length - 2; j++) {
+                                syn_title += "." + syn_parts[j];
+                            }
 //                                    word_type_html = "<i>" + syn_parts[syn_parts.length - 2] + "</i>. ";
-                                } else {
-                                    syn_title = syn;
-                                }
-
-                                final TextView synView = new TextView(context);
-                                LinearLayout.LayoutParams synLayoutParams = new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                );
-                                setLineStyle_meaning(synView, synLayoutParams);
-
-                                final boolean syn_title_like_word = syn_title.toLowerCase().compareTo(word.toLowerCase()) == 0;
-
-                                if (syn_title_like_word) {
-//                                    Spanned html = Html.fromHtml(def);
-                                    synView.setText(def);
-                                    accurateItems.add(synView);
-                                } else {
-                                    Spanned html = Html.fromHtml("<b><u>" + syn_title + "</u></b> " + def);
-                                    synView.setText(html);
-                                    similarItems.add(synView);
-                                    synView.setTextIsSelectable(false);
-
-                                    final String linked_syn_title = syn_title;
-
-                                    synView.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            synView.setBackgroundColor(Color.parseColor("#EEEEEE"));
-
-                                            Intent intent = new Intent(context, WordActivity.class);
-                                            intent.putExtra("dir", "ev");
-                                            intent.putExtra("word", linked_syn_title);
-                                            intent.putExtra("last_lookup_time", "NOW");
-
-                                            context.startActivity(intent);
-                                        }
-                                    });
-                                }
-
-
-
-                                // Examples
-                                for (int j = 0; j < examples.length(); j++) {
-                                    TextView exampleView = new TextView(context);
-                                    LinearLayout.LayoutParams exampleLayoutParams = new LinearLayout.LayoutParams(
-                                            LinearLayout.LayoutParams.MATCH_PARENT,
-                                            LinearLayout.LayoutParams.WRAP_CONTENT
-                                    );
-                                    setLineStyle_example(exampleView, exampleLayoutParams);
-                                    exampleView.setText(examples.getString(j));
-                                    if (syn_title_like_word) {
-                                        accurateItems.add(exampleView);
-                                    } else {
-                                        similarItems.add(exampleView);
-                                    }
-                                }
-
-
-                                // Synonyms
-                                if (synonyms.length() > 0) {
-                                    ArrayList<String> synonymList = new ArrayList<>();
-                                    for (int j = 1; j < synonyms.length(); j++) {
-                                        if (synonyms.getString(j).toLowerCase().compareTo(syn.toLowerCase()) != 0
-                                            && synonyms.getString(j).toLowerCase().compareTo(word.toLowerCase()) != 0
-                                        ) {
-                                            synonymList.add(synonyms.getString(j));
-                                        }
-                                    }
-                                    if (synonymList.size() > 0) {
-                                        String synonymsText;
-                                        if (synonymList.size() > 1) {
-                                            synonymsText = "~ " + synonymList.get(0);
-                                            for (int j = 1; j < synonymList.size(); j++) {
-                                                synonymsText += ", " + synonymList.get(j);
-                                            }
-                                        } else {
-                                            synonymsText = "~ " + synonymList.get(0);
-                                        }
-                                        TextView synonymsView = new TextView(context);
-                                        LinearLayout.LayoutParams antonymLayoutParams = new LinearLayout.LayoutParams(
-                                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                                LinearLayout.LayoutParams.WRAP_CONTENT
-                                        );
-                                        setLineStyle_synonyms(synonymsView, antonymLayoutParams);
-                                        synonymsView.setText(synonymsText);
-                                        if (syn_title_like_word) {
-                                            accurateItems.add(synonymsView);
-                                        } else {
-                                            similarItems.add(synonymsView);
-                                        }
-                                    }
-                                }
-                                
-                                // Antonyms
-                                if (antonyms.length() > 0) {
-                                    String antonymsText;
-                                    if (antonyms.length() > 1) {
-                                        antonymsText = ">< " + antonyms.getString(0);
-                                        for (int j = 1; j < antonyms.length(); j++) {
-                                            antonymsText += ", " + antonyms.getString(j);
-                                        }
-                                    } else {
-                                        antonymsText = ">< " + antonyms.getString(0);
-                                    }
-                                    TextView antonymsView = new TextView(context);
-                                    LinearLayout.LayoutParams antonymLayoutParams = new LinearLayout.LayoutParams(
-                                            LinearLayout.LayoutParams.MATCH_PARENT,
-                                            LinearLayout.LayoutParams.WRAP_CONTENT
-                                    );
-                                    setLineStyle_antonyms(antonymsView, antonymLayoutParams);
-                                    antonymsView.setText(antonymsText);
-                                    if (syn_title_like_word) {
-                                        accurateItems.add(antonymsView);
-                                    } else {
-                                        similarItems.add(antonymsView);
-                                    }
-                                }
-                                
-                                
-
-                            }
-                            int k = 0;
-                            for (View view: accurateItems) {
-                                if (k > VIEW_DEFAULT_MAX_LINES) {
-                                    seeMoreList.add(view);
-                                } else {
-                                    dictContainer.addView(view);
-                                }
-                                k++;
-                            }
-                            if (similarItems.size() > 0) {
-                                TextView similarTitle = new TextView(context);
-                                LinearLayout.LayoutParams similarTitleLayoutParams = new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                );
-                                setLineStyle_similarTitle(similarTitle, similarTitleLayoutParams);
-                                similarTitle.setText(similarTitleText);
-
-                                if (k > VIEW_DEFAULT_MAX_LINES) {
-                                    seeMoreList.add(similarTitle);
-                                } else {
-                                    dictContainer.addView(similarTitle);
-                                }
-                                k++;
-
-                                for (View view: similarItems) {
-                                    if (k > VIEW_DEFAULT_MAX_LINES) {
-                                        seeMoreList.add(view);
-                                    } else {
-                                        dictContainer.addView(view);
-                                    }
-                                    k++;
-                                }
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        } else {
+                            syn_title = syn;
                         }
-                    } else {
-                        String[] meaningLines = meaning
-                                .replaceAll("(?i)@" + word.substring(0, 2), "\n@" + word.substring(0, 2).toLowerCase())
-                                .split("\n");
-                        for (int i = 0; i < meaningLines.length; i++) {
-                            String line = meaningLines[i];
-//                            Spanned spannedLine = null;
-                            if (line.trim().compareTo("") == 0) {
-                                continue;
-                            }
 
-                            TextView meaningLineView = new TextView(context);
-                            LinearLayout.LayoutParams meaningLineLayoutParams = new LinearLayout.LayoutParams(
+                        final TextView synView = new TextView(context);
+                        LinearLayout.LayoutParams synLayoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        setLineStyle_meaning(synView, synLayoutParams);
+
+                        final boolean syn_title_like_word = syn_title.toLowerCase().compareTo(word.toLowerCase()) == 0;
+
+                        if (syn_title_like_word) {
+//                                    Spanned html = Html.fromHtml(def);
+                            synView.setText(def);
+                            accurateItems.add(synView);
+                        } else {
+                            Spanned html = Html.fromHtml("<b><u>" + syn_title + "</u></b> " + def);
+                            synView.setText(html);
+                            similarItems.add(synView);
+                            synView.setTextIsSelectable(false);
+
+                            final String linked_syn_title = syn_title;
+
+                            synView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    synView.setBackgroundColor(Color.parseColor("#EEEEEE"));
+
+                                    Intent intent = new Intent(context, WordActivity.class);
+                                    intent.putExtra("dir", "ev");
+                                    intent.putExtra("word", linked_syn_title);
+                                    intent.putExtra("last_lookup_time", "NOW");
+
+                                    context.startActivity(intent);
+                                }
+                            });
+                        }
+
+
+                        // Examples
+                        for (int j = 0; j < examples.length(); j++) {
+                            TextView exampleView = new TextView(context);
+                            LinearLayout.LayoutParams exampleLayoutParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
                             );
+                            setLineStyle_example(exampleView, exampleLayoutParams);
+                            exampleView.setText(examples.getString(j));
+                            if (syn_title_like_word) {
+                                accurateItems.add(exampleView);
+                            } else {
+                                similarItems.add(exampleView);
+                            }
+                        }
 
-                            if (dictTitle.compareTo(DictDbContract.TITLE_EV_1) == 0
-                                || dictTitle.compareTo(DictDbContract.TITLE_VE_1) == 0
-                                || dictTitle.compareTo(DictDbContract.TITLE_VE_2) == 0
-                            ) {
-                                switch (line.charAt(0)) {
-                                    case '/':
-                                        setLineStyle_spelling(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    case '@':
-                                        setLineStyle_word(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    case '*':
-                                        line = "* " + line.substring(1).trim();
-                                        setLineStyle_wordType(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    case '-':
-                                        line = line.substring(1).trim();
-                                        setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    case '=':
-                                        line = line.substring(1);
-                                        int plusPos = line.indexOf('+');
-                                        if (plusPos > -1) {
-                                            String leftStr = line.substring(0, plusPos).trim();
-                                            String rightStr = line.substring(plusPos + 1).trim();
-//                                            spannedLine = Html.fromHtml(leftStr + ": <i>" + rightStr + "</i>");
-                                            line = leftStr + ": " + rightStr;
-                                        } else {
-                                            line = line.trim();
-                                        }
-                                        setLineStyle_example(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    case '!':
-                                        line = line.substring(1).trim();
-                                        setLineStyle_idiom(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    default:
-                                        setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+
+                        // Synonyms
+                        if (synonyms.length() > 0) {
+                            ArrayList<String> synonymList = new ArrayList<>();
+                            for (int j = 1; j < synonyms.length(); j++) {
+                                if (synonyms.getString(j).toLowerCase().compareTo(syn.toLowerCase()) != 0
+                                        && synonyms.getString(j).toLowerCase().compareTo(word.toLowerCase()) != 0
+                                        ) {
+                                    synonymList.add(synonyms.getString(j));
                                 }
-                            } else if (dictTitle.compareTo(DictDbContract.TITLE_EV_2) == 0) {
-                                switch (line.charAt(0)) {
-                                    case '-':
-                                        line = line.substring(1).trim();
-                                        setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    case '*':
-                                        line = "* " + line.substring(1).trim();
-                                        setLineStyle_specializedTitle(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    case '+':
-                                        line = line.substring(1).trim() + ":";
-                                        setLineStyle_fieldTitle(meaningLineView, meaningLineLayoutParams);
-                                        break;
-                                    default:
-                                        setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                            }
+                            if (synonymList.size() > 0) {
+                                String synonymsText;
+                                if (synonymList.size() > 1) {
+                                    synonymsText = "~ " + synonymList.get(0);
+                                    for (int j = 1; j < synonymList.size(); j++) {
+                                        synonymsText += ", " + synonymList.get(j);
+                                    }
+                                } else {
+                                    synonymsText = "~ " + synonymList.get(0);
+                                }
+                                TextView synonymsView = new TextView(context);
+                                LinearLayout.LayoutParams antonymLayoutParams = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+                                setLineStyle_synonyms(synonymsView, antonymLayoutParams);
+                                synonymsView.setText(synonymsText);
+                                if (syn_title_like_word) {
+                                    accurateItems.add(synonymsView);
+                                } else {
+                                    similarItems.add(synonymsView);
+                                }
+                            }
+                        }
+
+                        // Antonyms
+                        if (antonyms.length() > 0) {
+                            String antonymsText;
+                            if (antonyms.length() > 1) {
+                                antonymsText = ">< " + antonyms.getString(0);
+                                for (int j = 1; j < antonyms.length(); j++) {
+                                    antonymsText += ", " + antonyms.getString(j);
                                 }
                             } else {
-                                setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                                antonymsText = ">< " + antonyms.getString(0);
                             }
+                            TextView antonymsView = new TextView(context);
+                            LinearLayout.LayoutParams antonymLayoutParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            setLineStyle_antonyms(antonymsView, antonymLayoutParams);
+                            antonymsView.setText(antonymsText);
+                            if (syn_title_like_word) {
+                                accurateItems.add(antonymsView);
+                            } else {
+                                similarItems.add(antonymsView);
+                            }
+                        }
+
+
+                    }
+                    int k = 0;
+                    for (View view : accurateItems) {
+                        if (k > VIEW_DEFAULT_MAX_LINES) {
+                            seeMoreList.add(view);
+                        } else {
+                            dictContainer.addView(view);
+                        }
+                        k++;
+                    }
+                    if (similarItems.size() > 0) {
+                        TextView similarTitle = new TextView(context);
+                        LinearLayout.LayoutParams similarTitleLayoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        setLineStyle_similarTitle(similarTitle, similarTitleLayoutParams);
+                        similarTitle.setText(similarTitleText);
+
+                        if (k > VIEW_DEFAULT_MAX_LINES) {
+                            seeMoreList.add(similarTitle);
+                        } else {
+                            dictContainer.addView(similarTitle);
+                        }
+                        k++;
+
+                        for (View view : similarItems) {
+                            if (k > VIEW_DEFAULT_MAX_LINES) {
+                                seeMoreList.add(view);
+                            } else {
+                                dictContainer.addView(view);
+                            }
+                            k++;
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                String[] meaningLines = meaning.split("\n");
+                for (int i = 0; i < meaningLines.length; i++) {
+                    String line = meaningLines[i];
+//                            Spanned spannedLine = null;
+                    if (line.trim().compareTo("") == 0) {
+                        continue;
+                    }
+
+                    TextView meaningLineView = new TextView(context);
+                    LinearLayout.LayoutParams meaningLineLayoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+                    if (dictTitle.compareTo(DictDbContract.TITLE_EV_1) == 0
+                            || dictTitle.compareTo(DictDbContract.TITLE_VE_1) == 0
+                            || dictTitle.compareTo(DictDbContract.TITLE_VE_2) == 0
+                            ) {
+                        switch (line.charAt(0)) {
+                            case '/':
+                                setLineStyle_spelling(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            case '@':
+                                setLineStyle_word(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            case '*':
+                                line = "* " + line.substring(1).trim();
+                                setLineStyle_wordType(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            case '-':
+                                line = line.substring(1).trim();
+                                setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            case '=':
+                                line = line.substring(1);
+                                int plusPos = line.indexOf('+');
+                                if (plusPos > -1) {
+                                    String leftStr = line.substring(0, plusPos).trim();
+                                    String rightStr = line.substring(plusPos + 1).trim();
+//                                            spannedLine = Html.fromHtml(leftStr + ": <i>" + rightStr + "</i>");
+                                    line = leftStr + ": " + rightStr;
+                                } else {
+                                    line = line.trim();
+                                }
+                                setLineStyle_example(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            case '!':
+                                line = line.substring(1).trim();
+                                setLineStyle_idiom(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            default:
+                                setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                        }
+                    } else if (dictTitle.compareTo(DictDbContract.TITLE_EV_2) == 0) {
+                        switch (line.charAt(0)) {
+                            case '-':
+                                line = line.substring(1).trim();
+                                setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            case '*':
+                                line = "* " + line.substring(1).trim();
+                                setLineStyle_specializedTitle(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            case '%':
+                                line = line.substring(1).trim() + ":";
+                                setLineStyle_fieldTitle(meaningLineView, meaningLineLayoutParams);
+                                break;
+                            default:
+                                setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                        }
+                    } else {
+                        setLineStyle_meaning(meaningLineView, meaningLineLayoutParams);
+                    }
 
 //                            if (spannedLine != null) {
 //                                meaningLineView.setText(spannedLine);
 //                            } else {
-                                meaningLineView.setText(line);
+                    meaningLineView.setText(line);
 //                            }
 
-                            if (i > VIEW_DEFAULT_MAX_LINES) {
-                                seeMoreList.add(meaningLineView);
-                            } else {
-                                dictContainer.addView(meaningLineView);
-                            }
-
-                        }
-                    }
-
-
-                    if (seeMoreList.size() >= SEE_MORE_LIST_MIN_LINES) {
-                        final TextView seeMoreClickableInner = new TextView(context);
-                        seeMoreClickableInner.setPaintFlags(seeMoreClickableInner.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                        seeMoreClickableInner.setTextColor(values.COLOR_BLUE);
-                        seeMoreClickableInner.setPadding(values.DP_5, values.DP_5, values.DP_5, values.DP_5);
-                        seeMoreClickableInner.setGravity(Gravity.CENTER);
-                        seeMoreClickableInner.setText(viewMoreText);
-                        seeMoreClickableInner.setCompoundDrawablesWithIntrinsicBounds(
-                                dropDownIcon, null, dropTransparentIcon, null
-                        );
-
-                        final LinearLayout seeMoreClickable = new LinearLayout(context);
-                        LinearLayout.LayoutParams seeMoreLayoutParams = new LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                        );
-                        seeMoreLayoutParams.setMargins(0, values.DP_10, 0, 0);
-                        seeMoreClickable.setLayoutParams(seeMoreLayoutParams);
-                        seeMoreClickable.setGravity(Gravity.CENTER);
-                        seeMoreClickable.addView(seeMoreClickableInner);
-
-                        seeMoreClickable.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (seeMoreClickableInner.getText().toString().compareTo(viewMoreText) == 0) {
-                                    for (View lineView : seeMoreList) {
-                                        // append before view more button
-                                        dictContainer.addView(lineView, dictContainer.getChildCount() - 1);
-                                    }
-                                    seeMoreClickableInner.setText(viewLessText);
-                                    seeMoreClickableInner.setCompoundDrawablesWithIntrinsicBounds(
-                                            dropUpIcon, null, dropTransparentIcon, null
-                                    );
-                                } else {
-                                    for (View lineView : seeMoreList) {
-                                        dictContainer.removeView(lineView);
-                                    }
-                                    seeMoreClickableInner.setText(viewMoreText);
-                                    seeMoreClickableInner.setCompoundDrawablesWithIntrinsicBounds(
-                                            dropDownIcon, null, dropTransparentIcon, null
-                                    );
-                                }
-                            }
-                        });
-                        dictContainer.addView(seeMoreClickable);
+                    if (i > VIEW_DEFAULT_MAX_LINES) {
+                        seeMoreList.add(meaningLineView);
                     } else {
-                        for (View lineView : seeMoreList) {
-                            dictContainer.addView(lineView);
-                        }
+                        dictContainer.addView(meaningLineView);
                     }
+
                 }
             }
-            cursor.close();
+
+
+            if (seeMoreList.size() >= SEE_MORE_LIST_MIN_LINES) {
+                final TextView seeMoreClickableInner = new TextView(context);
+                seeMoreClickableInner.setPaintFlags(seeMoreClickableInner.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                seeMoreClickableInner.setTextColor(values.COLOR_BLUE);
+                seeMoreClickableInner.setPadding(values.DP_5, values.DP_5, values.DP_5, values.DP_5);
+                seeMoreClickableInner.setGravity(Gravity.CENTER);
+                seeMoreClickableInner.setText(viewMoreText);
+                seeMoreClickableInner.setCompoundDrawablesWithIntrinsicBounds(
+                        dropDownIcon, null, dropTransparentIcon, null
+                );
+
+                final LinearLayout seeMoreClickable = new LinearLayout(context);
+                LinearLayout.LayoutParams seeMoreLayoutParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                seeMoreLayoutParams.setMargins(0, values.DP_10, 0, 0);
+                seeMoreClickable.setLayoutParams(seeMoreLayoutParams);
+                seeMoreClickable.setGravity(Gravity.CENTER);
+                seeMoreClickable.addView(seeMoreClickableInner);
+
+                seeMoreClickable.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (seeMoreClickableInner.getText().toString().compareTo(viewMoreText) == 0) {
+                            for (View lineView : seeMoreList) {
+                                // append before view more button
+                                dictContainer.addView(lineView, dictContainer.getChildCount() - 1);
+                            }
+                            seeMoreClickableInner.setText(viewLessText);
+                            seeMoreClickableInner.setCompoundDrawablesWithIntrinsicBounds(
+                                    dropUpIcon, null, dropTransparentIcon, null
+                            );
+                        } else {
+                            for (View lineView : seeMoreList) {
+                                dictContainer.removeView(lineView);
+                            }
+                            seeMoreClickableInner.setText(viewMoreText);
+                            seeMoreClickableInner.setCompoundDrawablesWithIntrinsicBounds(
+                                    dropDownIcon, null, dropTransparentIcon, null
+                            );
+                        }
+                    }
+                });
+                dictContainer.addView(seeMoreClickable);
+            } else {
+                for (View lineView : seeMoreList) {
+                    dictContainer.addView(lineView);
+                }
+            }
         }
     }
 
@@ -462,6 +463,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
     private void setLineStyle_wordType(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTextSize(15);
@@ -469,6 +471,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setTextColor(values.COLOR_GREY_DK);
         textView.setLayoutParams(layoutParams);
     }
+
     private void setLineStyle_meaning(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(values.DP_10, values.DP_10, 0, 0);
         textView.setTextSize(19);
@@ -476,6 +479,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
     private void setLineStyle_example(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(values.DP_20, values.DP_5, 0, 0);
         textView.setTextSize(16);
@@ -483,6 +487,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
     private void setLineStyle_synonyms(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(values.DP_20, values.DP_5, 0, 0);
         textView.setTextSize(16);
@@ -491,6 +496,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
     private void setLineStyle_antonyms(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(values.DP_20, values.DP_5, 0, 0);
         textView.setTextSize(16);
@@ -499,6 +505,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
     private void setLineStyle_idiom(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTextSize(16);
@@ -507,6 +514,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
     private void setLineStyle_similarTitle(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTextSize(16);
@@ -515,6 +523,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
     private void setLineStyle_specializedTitle(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTextSize(15);
@@ -522,6 +531,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setTextColor(values.COLOR_YELLOW);
         textView.setLayoutParams(layoutParams);
     }
+
     private void setLineStyle_fieldTitle(TextView textView, LinearLayout.LayoutParams layoutParams) {
         layoutParams.setMargins(0, values.DP_10, 0, 0);
         textView.setTextSize(16);

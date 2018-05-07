@@ -7,7 +7,7 @@ android {
         applicationId "com.k43nqtn.tudienanhviet"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 19
+        versionCode 21
         versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

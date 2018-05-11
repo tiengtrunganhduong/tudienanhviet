@@ -106,6 +106,8 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
             final LinearLayout dictContainer = new LinearLayout(context);
             dictContainer.setOrientation(LinearLayout.VERTICAL);
             detailsContainer.addView(dictContainer);
+
+
             dictContainer.addView(createHeadline(dictTitle));
 
             final ArrayList<View> seeMoreList = new ArrayList<>();
@@ -543,5 +545,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
         textView.setLayoutParams(layoutParams);
         textView.setTextIsSelectable(true);
     }
+
+
 
 }

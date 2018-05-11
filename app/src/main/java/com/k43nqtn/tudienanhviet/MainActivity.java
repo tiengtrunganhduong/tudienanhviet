@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
@@ -23,20 +25,15 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-//import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.AdView;
-//import com.google.android.gms.ads.MobileAds;
-
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
-import com.facebook.ads.AdListener;
-import com.facebook.ads.AdView;
-import com.facebook.ads.AdSize;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
 
     Context context;
-    MyApplication myApplication;
     CursorAdapter cursorAdapter;
     CursorAdapter myWordsAdapter;
     SearchView searchView;
@@ -49,7 +46,14 @@ public class MainActivity extends AppCompatActivity {
     int my_words_dir = 0;
     LinearLayout adContainer;
     AdView adView;
-    com.google.android.gms.ads.AdView mAdView;
+
+    public static SQLiteDatabase wordsRdb, dictRdb, openRdb, openWdb;
+
+    public static final String ADMOB_APP_ID = "ca-app-pub-3126660852581586~6866555592";
+    public static final String ADMOB_UNIT_ID__BANNER_1 = "ca-app-pub-3126660852581586/9642614948";
+    public static final String ADMOB_UNIT_ID__BANNER_2 = "ca-app-pub-3126660852581586/7819371154";
+    public static final String ADMOB_UNIT_ID__BANNER_1B = "ca-app-pub-3126660852581586/7530283772";
+    public static final String ADMOB_UNIT_ID__BANNER_2B = "ca-app-pub-3126660852581586/6082803292";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
-        myApplication = (MyApplication) this.getApplication();
 
         my_words_heading = (LinearLayout) findViewById(R.id.my_words_heading);
         list_suggestions = (ListView) findViewById(R.id.list_suggestions);
@@ -79,32 +82,24 @@ public class MainActivity extends AppCompatActivity {
 
         setupSearchFocusClearing();
 
-        initAds();
+        initBannerAd(ADMOB_UNIT_ID__BANNER_1, ADMOB_UNIT_ID__BANNER_1B);
     }
 
     private void initDatabases() {
-        if (myApplication.dictRdb == null) {
-            myApplication.dictRdb = (new DictDbHelper(this)).getReadableDatabase();
+        if (dictRdb == null) {
+            dictRdb = (new DictDbHelper(context)).getReadableDatabase();
         }
-        if (myApplication.wordsRdb == null) {
-            myApplication.wordsRdb = (new WordsDbHelper(this)).getReadableDatabase();
+        if (wordsRdb == null) {
+            wordsRdb = (new WordsDbHelper(context)).getReadableDatabase();
         }
-        if (myApplication.openRdb == null || myApplication.openWdb == null) {
-            OpenDbHelper openDbHelper = new OpenDbHelper(this);
-            myApplication.openRdb = openDbHelper.getReadableDatabase();
-            myApplication.openWdb = openDbHelper.getWritableDatabase();
+        if (openRdb == null || openWdb == null) {
+            OpenDbHelper openDbHelper = new OpenDbHelper(context);
+            openRdb = openDbHelper.getReadableDatabase();
+            openWdb = openDbHelper.getWritableDatabase();
         }
     }
 
     private void setupSuggestionsList() {
-//        final String letters = "abcdefghijklmnopqrstuvwxyz#";
-//        final String a_based = "àáạảãâầấậẩẫăằắặẳẵ";
-//        final String e_based = "èéẹẻẽêềếệểễ";
-//        final String i_based = "ìíịỉĩ";
-//        final String o_based = "òóọỏõôồốộổỗơờớợởỡ";
-//        final String u_based = "ùúụủũưừứựửữ";
-//        final String y_based = "ỳýỵỷỹ";
-//        final String d_based = "đ";
 
         cursorAdapter = new SuggestionCursorAdapter(this, null);
         cursorAdapter.setFilterQueryProvider(new FilterQueryProvider() {
@@ -115,29 +110,10 @@ public class MainActivity extends AppCompatActivity {
                 if (search.compareTo("") == 0) {
                     cursor = null;
                 } else {
-//                    char char0 = search.charAt(0);
-//                    if (letters.indexOf(char0) == -1) {
-//                        if (a_based.indexOf(char0) > -1) {
-//                            char0 = 'a';
-//                        } else if (e_based.indexOf(char0) > -1) {
-//                            char0 = 'e';
-//                        } else if (i_based.indexOf(char0) > -1) {
-//                            char0 = 'i';
-//                        } else if (o_based.indexOf(char0) > -1) {
-//                            char0 = 'o';
-//                        } else if (u_based.indexOf(char0) > -1) {
-//                            char0 = 'u';
-//                        } else if (y_based.indexOf(char0) > -1) {
-//                            char0 = 'y';
-//                        } else if (d_based.indexOf(char0) > -1) {
-//                            char0 = 'd';
-//                        } else {
-//                            char0 = '#';
-//                        }
-//                    }
+
                     int tableIndex = TableUtils.getTableIndex(search);
                     String tableName = WordsDbContract.getTableName(tableIndex);
-                    cursor = myApplication.wordsRdb.rawQuery(
+                    cursor = wordsRdb.rawQuery(
                             " SELECT "
                                     + WordsDbContract.COLUMN_ID + ", "
                                     + WordsDbContract.COLUMN_LANG + ", "
@@ -265,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
                         sort_clause = " ORDER BY " + OpenDbContract.MyWord.COL_LAST_LOOKUP_TIME + " DESC";
                 }
 
-                Cursor cursor = myApplication.openRdb.rawQuery(
+                Cursor cursor = openRdb.rawQuery(
                         "SELECT * FROM "
                                 + OpenDbContract.MyWord.TBL_NAME
                                 + where_clause
@@ -319,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                         String table = OpenDbContract.MyWord.TBL_NAME;
                         String whereClause = OpenDbContract.MyWord.COL_ID + " = ?";
                         String[] whereArgs = new String[]{ String.valueOf(id) };
-                        if (myApplication.openWdb.delete(table, whereClause, whereArgs) > 0) {
+                        if (openWdb.delete(table, whereClause, whereArgs) > 0) {
                             Toast.makeText(
                                     context,
                                     String.format(context.getResources().getString(R.string.deleted_word), word),
@@ -389,53 +365,36 @@ public class MainActivity extends AppCompatActivity {
         list_my_words.setOnTouchListener(onTouchListener);
     }
 
-    private void initAds() {
+    private void initBannerAd(final String adUnitId, final String adUnitId2) {
 
-                com.google.android.gms.ads.MobileAds.initialize(context, "ca-app-pub-3126660852581586~6866555592");
-                mAdView = new com.google.android.gms.ads.AdView(context);
-                mAdView.setAdSize(com.google.android.gms.ads.AdSize.SMART_BANNER);
-                mAdView.setAdUnitId("ca-app-pub-3126660852581586/9642614948");
+                MobileAds.initialize(context, ADMOB_APP_ID);
+                adView = new AdView(context);
+                adView.setAdSize(AdSize.SMART_BANNER);
+                adView.setAdUnitId(adUnitId);
 
 
-                mAdView.setAdListener(new com.google.android.gms.ads.AdListener() {
+                adView.setAdListener(new AdListener() {
                     @Override
                     public void onAdLoaded() {
                         // Code to be executed when an ad finishes loading.
                         adContainer.removeAllViews();
-                        adContainer.addView(mAdView);
+                        adContainer.setVisibility(View.VISIBLE);
+
+                        if (adView.getParent() != null) {
+                            ((ViewGroup) adView.getParent()).removeView(adView);
+                        }
+                        adContainer.addView(adView);
                     }
 
                     @Override
                     public void onAdFailedToLoad(int errorCode) {
                         // Code to be executed when an ad request fails.
                         adContainer.removeAllViews();
-                        // Instantiate an AdView view
-                        adView = new AdView(context, "591787627837331_591787964503964", AdSize.BANNER_HEIGHT_50);
-                        adView.setAdListener(new AdListener() {
-                            @Override
-                            public void onError(Ad ad, AdError adError) {
-                            }
+                        adContainer.setVisibility(View.GONE);
 
-                            @Override
-                            public void onAdLoaded(Ad ad) {
-                                // Ad loaded callback
-                                // Add the ad view to your activity layout
-                                adContainer.addView(adView);
-                            }
-
-                            @Override
-                            public void onAdClicked(Ad ad) {
-                                // Ad clicked callback
-                            }
-
-                            @Override
-                            public void onLoggingImpression(Ad ad) {
-                                // Ad impression logged callback
-                            }
-                        });
-
-                        // Request an ad
-                        adView.loadAd();
+                        if (adUnitId2 != null) {
+                            initBannerAd(adUnitId2, null);
+                        }
                     }
 
                     @Override
@@ -456,8 +415,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                com.google.android.gms.ads.AdRequest adRequest = new com.google.android.gms.ads.AdRequest.Builder().build();
-                mAdView.loadAd(adRequest);
+                AdRequest adRequest = new AdRequest.Builder().build();
+                adView.loadAd(adRequest);
 
     }
 
@@ -534,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateMyWordsDirSpinnerAsync() {
         MyWordsDirSpinnerUpdateTask task = new MyWordsDirSpinnerUpdateTask(
                 this,
-                myApplication.openRdb,
+                openRdb,
                 my_words_dir_spinner,
                 my_words_dir
         );

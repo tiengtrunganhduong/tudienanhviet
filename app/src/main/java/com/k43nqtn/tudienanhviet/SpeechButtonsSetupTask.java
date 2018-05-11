@@ -44,6 +44,7 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
                            String word,
                            String lang,
                            SQLiteDatabase rdb,
+                           MediaPlayer mediaPlayer,
                            HorizontalScrollView speechButtonsScroller,
                            LinearLayout speechButtonsContainer
     ) {
@@ -51,12 +52,11 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
         this.word = word;
         this.lang = lang;
         this.rdb = rdb;
+        this.mediaPlayer = mediaPlayer;
         this.speechButtonsScroller = speechButtonsScroller;
         this.speechButtonsContainer = speechButtonsContainer;
 
         this.values = new Values(context);
-
-        mediaPlayer = new MediaPlayer();
 
         ic_speaker = ContextCompat.getDrawable(context, R.drawable.ic_speaker);
         ic_play = ContextCompat.getDrawable(context, R.drawable.ic_play);
@@ -170,7 +170,9 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
                                 speechButton.setClickable(false);
 
                                 try {
-                                    mediaPlayer.release();
+                                    if (mediaPlayer != null) {
+                                        mediaPlayer.release();
+                                    }
                                     mediaPlayer = new MediaPlayer();
                                     mediaPlayer.setDataSource(uri);
                                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -301,5 +303,6 @@ class SpeechButtonsSetupTask extends AsyncTask<Void, Void, Void> {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
 
 }

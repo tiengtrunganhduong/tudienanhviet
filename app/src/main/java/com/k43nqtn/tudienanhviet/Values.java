@@ -45,7 +45,7 @@ class Values {
     }
 
 
-    private int dpToPx(float dp) {
+    public int dpToPx(float dp) {
         return (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 dp,

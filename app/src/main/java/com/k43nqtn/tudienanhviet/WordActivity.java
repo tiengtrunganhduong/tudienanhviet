@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -68,6 +69,7 @@ public class WordActivity extends AppCompatActivity {
         tvLookupCount = (TextView) findViewById(R.id.lookup_count);
         prevButton = (Button) findViewById(R.id.prev_word);
         nextButton = (Button) findViewById(R.id.next_word);
+        adContainer = (LinearLayout) findViewById(R.id.ad_container);
         values = new Values(context);
 
         Bundle extras = getIntent().getExtras();
@@ -121,7 +123,19 @@ public class WordActivity extends AppCompatActivity {
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        try {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initDatabases() {
@@ -136,6 +150,61 @@ public class WordActivity extends AppCompatActivity {
     }
 
     private void initBannerAd(final String adUnitId, final String adUnitId2) {
+
+        MobileAds.initialize(context, MainActivity.ADMOB_APP_ID);
+        adView = new AdView(context);
+        adView.setAdSize(AdSize.SMART_BANNER);
+        adView.setAdUnitId(adUnitId);
+
+
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                adContainer.removeAllViews();
+                adContainer.setVisibility(View.VISIBLE);
+
+                if (adView.getParent() != null) {
+                    ((ViewGroup) adView.getParent()).removeView(adView);
+                }
+                adContainer.addView(adView);
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                adContainer.removeAllViews();
+                adContainer.setVisibility(View.GONE);
+
+                if (adUnitId2 != null) {
+                    initBannerAd(adUnitId2, null);
+                }
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when when the user is about to return
+                // to the app after tapping on an ad.
+            }
+        });
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+    }
+
+    private void _initBannerAd(final String adUnitId, final String adUnitId2) {
         if (adContainer == null) {
             adContainer = new LinearLayout(context);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(

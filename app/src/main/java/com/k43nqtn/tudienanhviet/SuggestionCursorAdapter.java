@@ -42,7 +42,7 @@ class SuggestionCursorAdapter extends CursorAdapter {
 
       if (2 == lang) {
           final String word_html = word +
-                  " &nbsp;<font color='#D1D1D1'><small><small><small><i><b>(&nbsp;English&nbsp;only&nbsp;)</b></i></small></small></small></font>";
+                  " <font color='#D1D1D1'><small><small><i>&nbsp;&nbsp;&mdash;&nbsp;English&nbsp;Only</i></small></small></font>";
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
               txt_word.setText(Html.fromHtml(word_html, Html.FROM_HTML_MODE_COMPACT));
           } else {
@@ -52,11 +52,6 @@ class SuggestionCursorAdapter extends CursorAdapter {
           txt_word.setText(word);
       }
 
-//      if (0 == lang || 2 == lang) {
-//          img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
-//      } else {
-//          img_arrow.setImageResource(R.drawable.ic_chevron_vi_en);
-//      }
       switch (lang) {
           case 0:
               img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);

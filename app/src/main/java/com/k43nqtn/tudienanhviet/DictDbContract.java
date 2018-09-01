@@ -12,14 +12,14 @@ final class DictDbContract {
 
     static final String TABLE_EV_1 = "en_vi";
     static final String TABLE_EV_2 = "en_vi_specialized";
-    static final String TABLE_E_1 = "wordnet";
+    static final String TABLE_EE_1 = "wordnet";
     static final String TABLE_VE_1 = "vi_en_hnduc";
     static final String TABLE_VE_2 = "vi_en";
     static final String TABLE_VE_3 = "vi_en_vnedict";
 
     static final String TITLE_EV_1 = "Anh Việt - Hồ Ngọc Đức";
     static final String TITLE_EV_2 = "Anh Việt - Chuyên ngành";
-    static final String TITLE_E_1 = "Anh Anh - WordNet";
+    static final String TITLE_EE_1 = "Anh Anh - WordNet";
     static final String TITLE_VE_1 = "Việt Anh - Hồ Ngọc Đức";
     static final String TITLE_VE_2 = "Việt Anh";
     static final String TITLE_VE_3 = "Việt Anh - VNEDICT";

@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
@@ -111,7 +112,7 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
             dictContainer.addView(createHeadline(dictTitle));
 
             final ArrayList<View> seeMoreList = new ArrayList<>();
-            if (dictTitle.compareTo(DictDbContract.TITLE_E_1) == 0) {
+            if (dictTitle.compareTo(DictDbContract.TITLE_EE_1) == 0) {
                 try {
                     JSONArray details = new JSONArray(meaning);
                     ArrayList<View> accurateItems = new ArrayList<>();
@@ -150,12 +151,15 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                         final boolean syn_title_like_word = syn_title.toLowerCase().compareTo(word.toLowerCase()) == 0;
 
                         if (syn_title_like_word) {
-//                                    Spanned html = Html.fromHtml(def);
                             synView.setText(def);
                             accurateItems.add(synView);
                         } else {
-                            Spanned html = Html.fromHtml("<b><u>" + syn_title + "</u></b> " + def);
-                            synView.setText(html);
+                            final String syn_html = "<b><u>" + syn_title + "</u></b> " + def;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                synView.setText(Html.fromHtml(syn_html, Html.FROM_HTML_MODE_COMPACT));
+                            } else {
+                                synView.setText(Html.fromHtml(syn_html));
+                            }
                             similarItems.add(synView);
                             synView.setTextIsSelectable(false);
 
@@ -334,7 +338,6 @@ class WordDetailsRenderTask extends AsyncTask<Void, Void, Cursor> {
                                 if (plusPos > -1) {
                                     String leftStr = line.substring(0, plusPos).trim();
                                     String rightStr = line.substring(plusPos + 1).trim();
-//                                            spannedLine = Html.fromHtml(leftStr + ": <i>" + rightStr + "</i>");
                                     line = leftStr + ": " + rightStr;
                                 } else {
                                     line = line.trim();

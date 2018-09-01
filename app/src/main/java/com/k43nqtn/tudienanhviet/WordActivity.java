@@ -86,7 +86,7 @@ public class WordActivity extends AppCompatActivity {
                     updateLookupCountAsync(word, dir);
                 }
 
-                if (dir.compareTo("ev") == 0) {
+                if (dir.compareTo("ev") == 0 || dir.compareTo("ee") == 0) {
                     setupSpeechButtonsAsync(word, "en");
                 }
 
@@ -480,7 +480,7 @@ public class WordActivity extends AppCompatActivity {
 //    }
 
     private void renderWordDetailsAsync(String word, String dir) {
-        if (dir.compareTo("ev") == 0) {
+        if (dir.compareTo("ev") == 0 || dir.compareTo("ee") == 0) {
             (new WordDetailsRenderTask(
                     this,
                     word,
@@ -503,8 +503,8 @@ public class WordActivity extends AppCompatActivity {
                     this,
                     word,
                     MainActivity.dictRdb,
-                    DictDbContract.TABLE_E_1,
-                    DictDbContract.TITLE_E_1,
+                    DictDbContract.TABLE_EE_1,
+                    DictDbContract.TITLE_EE_1,
                     detailsContainer
             )).execute();
 

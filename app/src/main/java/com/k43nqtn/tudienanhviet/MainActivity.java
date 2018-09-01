@@ -199,7 +199,21 @@ public class MainActivity extends AppCompatActivity {
                 Cursor cursor = (Cursor) cursorAdapter.getItem(i);
 
                 int lang = cursor.getInt(cursor.getColumnIndex(WordsDbContract.COLUMN_LANG));
-                String dir = 0 == lang ? "ev" : "ve";
+//                String dir = 0 == lang ? "ev" : "ve";
+                String dir;
+                switch (lang) {
+                    case 0:
+                        dir = "ev";
+                        break;
+                    case 1:
+                        dir = "ve";
+                        break;
+                    case 2:
+                        dir = "ee";
+                        break;
+                    default:
+                        dir = "ev";
+                }
                 String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_TITLE));
                 if (word == null || word.compareTo("") == 0) {
                     word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
@@ -221,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 String where_clause;
                 switch (my_words_dir) {
                     case 1:
-                        where_clause = " WHERE " + OpenDbContract.MyWord.COL_DIR + " = 'ev'";
+                        where_clause = " WHERE " + OpenDbContract.MyWord.COL_DIR + " IN ('ev', 'ee')";
                         break;
                     case 2:
                         where_clause = " WHERE " + OpenDbContract.MyWord.COL_DIR + " = 've'";
@@ -466,15 +480,20 @@ public class MainActivity extends AppCompatActivity {
                 newText = newText.trim();
                 if (newText.compareTo("") == 0) {
                     list_suggestions.setVisibility(View.GONE);
-                    list_my_words.setVisibility(View.VISIBLE);
+
                     my_words_heading.setVisibility(View.VISIBLE);
+                    list_my_words.setVisibility(View.VISIBLE);
+
                 } else {
                     cursorAdapter.getFilter().filter(newText);
-                    
-                    list_suggestions.setVisibility(View.VISIBLE);
-                    list_my_words.setVisibility(View.GONE);
                     my_words_heading.setVisibility(View.GONE);
+                    list_my_words.setVisibility(View.GONE);
+
+                    list_suggestions.setVisibility(View.VISIBLE);
+                    list_suggestions.setSelectionAfterHeaderView();
+
                 }
+
 
                 return false;
             }

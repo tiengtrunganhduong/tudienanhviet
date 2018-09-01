@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 final class WordsDbContract {
     static final String DATABASE_NAME = "words.db";
-    static final int DATABASE_VERSION = 2;
+    static final int DATABASE_VERSION = 3;
 
     static final String COLUMN_ID = BaseColumns._ID;
     static final String COLUMN_LANG = "lang";

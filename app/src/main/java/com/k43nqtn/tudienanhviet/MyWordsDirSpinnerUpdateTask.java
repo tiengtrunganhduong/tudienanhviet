@@ -26,8 +26,8 @@ class MyWordsDirSpinnerUpdateTask extends AsyncTask<Void, Void, ArrayAdapter> {
     protected ArrayAdapter<String> doInBackground(Void... voids) {
         String[] dirs = {
                 "All (%d)",
-                "E-V (%d)",
-                "V-E (%d)",
+                "EN (%d)",
+                "VI (%d)",
         };
 
         for (int i = 0; i < dirs.length; i++) {
@@ -54,7 +54,7 @@ class MyWordsDirSpinnerUpdateTask extends AsyncTask<Void, Void, ArrayAdapter> {
 
         switch (dir_int) {
             case 1:
-                where_clause = " WHERE " + OpenDbContract.MyWord.COL_DIR + " = 'ev'";
+                where_clause = " WHERE " + OpenDbContract.MyWord.COL_DIR + " IN ('ev', 'ee')";
                 break;
             case 2:
                 where_clause = " WHERE " + OpenDbContract.MyWord.COL_DIR + " = 've'";

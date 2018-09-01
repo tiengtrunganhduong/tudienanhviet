@@ -34,10 +34,18 @@ class MyWordCursorAdapter extends CursorAdapter {
 
       String dir = cursor.getString(cursor.getColumnIndex(OpenDbContract.MyWord.COL_DIR));
 
-      if (dir.compareTo("ev") == 0) {
-          img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
-      } else {
-          img_arrow.setImageResource(R.drawable.ic_chevron_vi_en);
+      switch (dir) {
+          case "ev":
+              img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
+              break;
+          case "ve":
+              img_arrow.setImageResource(R.drawable.ic_chevron_vi_en);
+              break;
+          case "ee":
+              img_arrow.setImageResource(R.drawable.ic_chevron_en_en);
+              break;
+          default:
+              img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
       }
   }
 }

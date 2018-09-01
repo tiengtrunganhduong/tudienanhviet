@@ -2,6 +2,9 @@ package com.k43nqtn.tudienanhviet;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,17 +33,42 @@ class SuggestionCursorAdapter extends CursorAdapter {
       ImageView img_arrow = view.findViewById(R.id.img_arrow);
 
       // Extract properties from cursor
+      int lang = cursor.getInt(cursor.getColumnIndex(WordsDbContract.COLUMN_LANG));
       String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_TITLE));
+
       if (word == null || word.compareTo("") == 0) {
           word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
       }
-      txt_word.setText(word);
 
-      int lang = cursor.getInt(cursor.getColumnIndex(WordsDbContract.COLUMN_LANG));
-      if (0 == lang) {
-          img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
+      if (2 == lang) {
+          final String word_html = word +
+                  " &nbsp;<font color='#D1D1D1'><small><small><small><i><b>(&nbsp;English&nbsp;only&nbsp;)</b></i></small></small></small></font>";
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+              txt_word.setText(Html.fromHtml(word_html, Html.FROM_HTML_MODE_COMPACT));
+          } else {
+              txt_word.setText(Html.fromHtml(word_html));
+          }
       } else {
-          img_arrow.setImageResource(R.drawable.ic_chevron_vi_en);
+          txt_word.setText(word);
+      }
+
+//      if (0 == lang || 2 == lang) {
+//          img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
+//      } else {
+//          img_arrow.setImageResource(R.drawable.ic_chevron_vi_en);
+//      }
+      switch (lang) {
+          case 0:
+              img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
+              break;
+          case 1:
+              img_arrow.setImageResource(R.drawable.ic_chevron_vi_en);
+              break;
+          case 2:
+              img_arrow.setImageResource(R.drawable.ic_chevron_en_en);
+              break;
+          default:
+              img_arrow.setImageResource(R.drawable.ic_chevron_en_vi);
       }
   }
 }

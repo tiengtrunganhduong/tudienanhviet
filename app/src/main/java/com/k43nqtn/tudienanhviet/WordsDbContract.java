@@ -5,13 +5,13 @@ import android.provider.BaseColumns;
 
 final class WordsDbContract {
     static final String DATABASE_NAME = "words.db";
-    static final int DATABASE_VERSION = 3;
+    static final int DATABASE_VERSION = 4;
 
     static final String COLUMN_ID = BaseColumns._ID;
     static final String COLUMN_LANG = "lang";
     static final String COLUMN_LOWERCASE = "lowercase";
     static final String COLUMN_ACCENTLESS = "accentless";
-    static final String COLUMN_TITLE = "title";
+    static final String COLUMN_TRANSLATION = "translation";
 
 //    public static final String TABLE_0 = "words_0";
 //    public static final String TABLE_1 = "words_1";

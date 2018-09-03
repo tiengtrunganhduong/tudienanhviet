@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                                     + WordsDbContract.COLUMN_LANG + ", "
                                     + WordsDbContract.COLUMN_LOWERCASE + ", "
                                     + WordsDbContract.COLUMN_ACCENTLESS + ", "
-                                    + WordsDbContract.COLUMN_TITLE
+                                    + WordsDbContract.COLUMN_TRANSLATION
                                     + " FROM " + tableName
                                     + " WHERE " + WordsDbContract.COLUMN_LOWERCASE + " LIKE @search"
                                     + " OR " + WordsDbContract.COLUMN_ACCENTLESS + " LIKE @search"
@@ -214,10 +214,11 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         dir = "ev";
                 }
-                String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_TITLE));
-                if (word == null || word.compareTo("") == 0) {
-                    word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
-                }
+//                String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_TRANSLATION));
+//                if (word == null || word.compareTo("") == 0) {
+//                    word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
+//                }
+                String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
                 intent.putExtra("dir", dir);
                 intent.putExtra("word", word);
                 intent.putExtra("last_lookup_time", "NOW");

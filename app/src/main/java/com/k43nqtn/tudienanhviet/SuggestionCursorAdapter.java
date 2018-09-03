@@ -34,12 +34,16 @@ class SuggestionCursorAdapter extends CursorAdapter {
 
       // Extract properties from cursor
       int lang = cursor.getInt(cursor.getColumnIndex(WordsDbContract.COLUMN_LANG));
-      String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_TITLE));
 
-      if (word == null || word.compareTo("") == 0) {
-          word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
-      }
+//      String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_TRANSLATION));
+//      if (word == null || word.compareTo("") == 0) {
+//          word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
+//      }
 
+      String word = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_LOWERCASE));
+      String translation = cursor.getString(cursor.getColumnIndex(WordsDbContract.COLUMN_TRANSLATION));
+
+      /*
       if (2 == lang) {
           final String word_html = word +
                   " <font color='#D1D1D1'><small><small><i>&nbsp;&nbsp;&mdash;&nbsp;English&nbsp;Only</i></small></small></font>";
@@ -51,6 +55,27 @@ class SuggestionCursorAdapter extends CursorAdapter {
       } else {
           txt_word.setText(word);
       }
+      */
+      if (translation != null && translation.compareTo("") != 0) {
+          final String word_html = word +
+                  " <br><font color='#CCCCCC'><small><small><i>" + translation + "</i></small></small></font>";
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+              txt_word.setText(Html.fromHtml(word_html, Html.FROM_HTML_MODE_COMPACT));
+          } else {
+              txt_word.setText(Html.fromHtml(word_html));
+          }
+      } else if (2 == lang) {
+          final String word_html = word +
+                  " <br><font color='#CCCCCC'><small><small><i>(English Only)</i></small></small></font>";
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+              txt_word.setText(Html.fromHtml(word_html, Html.FROM_HTML_MODE_COMPACT));
+          } else {
+              txt_word.setText(Html.fromHtml(word_html));
+          }
+      } else {
+          txt_word.setText(word);
+      }
+
 
       switch (lang) {
           case 0:

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 class LookupCountUpdateTask extends AsyncTask<Void, Void, Void> {
@@ -46,7 +47,7 @@ class LookupCountUpdateTask extends AsyncTask<Void, Void, Void> {
         );
         if (cursor != null) {
             cursor.moveToFirst();
-            String lastLookupTime = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date());
+            String lastLookupTime = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())).format(new Date());
 
             if (cursor.getCount() > 0) {
                 int lookedUpCount = cursor.getInt(cursor.getColumnIndex(OpenDbContract.MyWord.COL_LOOKUP_COUNT));

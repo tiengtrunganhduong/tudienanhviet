@@ -56,7 +56,8 @@ class SuggestionCursorAdapter extends CursorAdapter {
           txt_word.setText(word);
       }
       */
-      if (translation != null && translation.compareTo("") != 0) {
+
+      if (!word.contains(" ") && translation != null && translation.compareTo("") != 0) {
           final String word_html = word +
                   " <br><font color='#CCCCCC'><small><small><i>" + translation + "</i></small></small></font>";
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
